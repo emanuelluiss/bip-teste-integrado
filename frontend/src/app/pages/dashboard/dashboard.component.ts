@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   beneficios: Beneficio[] = [];
   transferencias: TransferenciaHistorico[] = [];
   loading = true;
+  filterAtivos = true;
 
   constructor(
     private service: BeneficioService,
@@ -48,6 +49,10 @@ export class DashboardComponent implements OnInit {
 
   get totalInativos(): number {
     return this.beneficios.filter(b => !b.ativo).length;
+  }
+
+  get beneficiosFiltrados(): Beneficio[] {
+    return this.beneficios.filter(b => b.ativo === this.filterAtivos);
   }
 
   get transferenciasRecentes(): TransferenciaHistorico[] {

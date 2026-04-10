@@ -24,14 +24,14 @@ interface NavItem {
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
-  collapsed = false;
+  sidebarCollapsed = false;
   currentRoute = '';
 
   navItems: NavItem[] = [
-    { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard' },
-    { label: 'Benefícios', icon: 'pi pi-wallet', route: '/beneficios' },
+    { label: 'Dashboard',      icon: 'pi pi-home',                   route: '/dashboard' },
+    { label: 'Benefícios',     icon: 'pi pi-gift',                   route: '/beneficios' },
     { label: 'Transferências', icon: 'pi pi-arrow-right-arrow-left', route: '/transferencia' },
-    { label: 'Histórico', icon: 'pi pi-history', route: '/historico' }
+    { label: 'Histórico',      icon: 'pi pi-clock',                  route: '/historico' }
   ];
 
   breadcrumbMap: Record<string, string> = {
@@ -55,7 +55,7 @@ export class LayoutComponent implements OnInit {
 
   @HostListener('window:resize')
   checkCollapse(): void {
-    this.collapsed = window.innerWidth < 1024;
+    this.sidebarCollapsed = window.innerWidth < 1024;
   }
 
   get breadcrumb(): string {

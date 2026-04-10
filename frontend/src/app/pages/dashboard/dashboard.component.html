@@ -111,18 +111,10 @@
     <div class="main-panel">
       <div class="panel-header">
         <span class="panel-title">Benefícios</span>
-        <div class="panel-filters">
-          <div class="filter-toggle on">
-            <span>Data</span>
-            <div class="toggle-dot on"></div>
-          </div>
-          <div class="filter-toggle">
-            <span>Tipo</span>
-            <div class="toggle-dot"></div>
-          </div>
-          <div class="filter-toggle">
-            <span>Status</span>
-            <div class="toggle-dot"></div>
+        <div class="panel-filters" (click)="filterAtivos = !filterAtivos" style="cursor:pointer">
+          <div class="filter-toggle" [class.on]="filterAtivos">
+            <span>{{ filterAtivos ? 'Ativos' : 'Inativos' }}</span>
+            <div class="toggle-dot" [class.on]="filterAtivos"></div>
           </div>
         </div>
         <button class="quick-btn" style="width:auto;padding:6px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius);background:transparent;color:var(--accent-primary);font-family:var(--font-title);font-size:12px;letter-spacing:.06em;cursor:pointer"
@@ -152,7 +144,7 @@
           <span style="text-align:center">Status</span>
         </div>
 
-        <div class="table-row" *ngFor="let b of beneficios | slice:0:6"
+        <div class="table-row" *ngFor="let b of beneficiosFiltrados | slice:0:6"
              (click)="router.navigate(['/beneficios', b.id])">
           <div class="row-avatar">{{ b.nome.substring(0,2).toUpperCase() }}</div>
           <div class="row-desc">
@@ -175,7 +167,7 @@
           </div>
         </div>
 
-        <div class="empty-table" *ngIf="beneficios.length === 0">
+        <div class="empty-table" *ngIf="beneficiosFiltrados.length === 0">
           <i class="pi pi-inbox"></i>
           <span>Nenhum benefício cadastrado.</span>
         </div>
