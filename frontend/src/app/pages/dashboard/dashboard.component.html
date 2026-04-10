@@ -1,5 +1,6 @@
 <div class="dashboard">
 
+  <!-- Header -->
   <div class="page-header">
     <div>
       <h2 class="page-title">Dashboard</h2>
@@ -13,125 +14,216 @@
   <!-- Metric cards -->
   <div class="metric-grid">
 
-    <div class="metric-card fin-card" (click)="router.navigate(['/beneficios'])">
-      <div class="metric-icon blue"><i class="pi pi-wallet"></i></div>
-      <div class="metric-info">
+    <div class="metric-card" style="--card-accent: #a78bfa" (click)="router.navigate(['/beneficios'])">
+      <div class="metric-top">
         <span class="metric-label">Total de Benefícios</span>
-        <p-skeleton *ngIf="loading" height="2rem" width="60px"></p-skeleton>
-        <span class="metric-value" *ngIf="!loading">{{ beneficios.length }}</span>
+        <div class="barcode">
+          <span style="height:12px"></span><span style="height:18px"></span><span style="height:8px"></span>
+          <span style="height:14px"></span><span style="height:20px"></span><span style="height:6px"></span>
+          <span style="height:16px"></span><span style="height:10px"></span>
+        </div>
+      </div>
+      <div class="metric-body">
+        <div class="metric-left">
+          <div class="metric-icon-box blue"><i class="pi pi-wallet"></i></div>
+          <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
+          <span class="metric-value" style="color:#a78bfa" *ngIf="!loading">{{ beneficios.length }}</span>
+        </div>
+        <svg class="sparkline" width="70" height="28" viewBox="0 0 70 28">
+          <polyline points="0,22 12,18 24,20 36,14 48,16 60,10 70,8"
+                    fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        </svg>
       </div>
     </div>
 
-    <div class="metric-card fin-card">
-      <div class="metric-icon cyan"><i class="pi pi-dollar"></i></div>
-      <div class="metric-info">
+    <div class="metric-card featured" style="--card-accent: #00e5ff">
+      <div class="metric-top">
         <span class="metric-label">Valor Total</span>
-        <p-skeleton *ngIf="loading" height="2rem" width="120px"></p-skeleton>
-        <span class="metric-value mono text-accent" *ngIf="!loading">{{ totalValor | brlCurrency }}</span>
+        <div class="barcode">
+          <span style="height:16px"></span><span style="height:10px"></span><span style="height:20px"></span>
+          <span style="height:8px"></span><span style="height:18px"></span><span style="height:12px"></span>
+          <span style="height:14px"></span><span style="height:6px"></span>
+        </div>
+      </div>
+      <div class="metric-body">
+        <div class="metric-left">
+          <div class="metric-icon-box cyan"><i class="pi pi-dollar"></i></div>
+          <p-skeleton *ngIf="loading" height="2rem" width="120px"></p-skeleton>
+          <span class="metric-value text-accent" *ngIf="!loading">{{ totalValor | brlCurrency }}</span>
+        </div>
+        <svg class="sparkline" width="70" height="28" viewBox="0 0 70 28">
+          <polyline points="0,24 12,20 24,22 36,12 48,14 60,6 70,4"
+                    fill="none" stroke="#00e5ff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
 
-    <div class="metric-card fin-card">
-      <div class="metric-icon green"><i class="pi pi-check-circle"></i></div>
-      <div class="metric-info">
+    <div class="metric-card" style="--card-accent: #00ff88">
+      <div class="metric-top">
         <span class="metric-label">Ativos</span>
-        <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
-        <span class="metric-value text-success" *ngIf="!loading">{{ totalAtivos }}</span>
+        <div class="barcode">
+          <span style="height:8px"></span><span style="height:16px"></span><span style="height:12px"></span>
+          <span style="height:20px"></span><span style="height:6px"></span><span style="height:14px"></span>
+          <span style="height:18px"></span><span style="height:10px"></span>
+        </div>
+      </div>
+      <div class="metric-body">
+        <div class="metric-left">
+          <div class="metric-icon-box green"><i class="pi pi-check-circle"></i></div>
+          <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
+          <span class="metric-value text-success" *ngIf="!loading">{{ totalAtivos }}</span>
+        </div>
+        <svg class="sparkline" width="70" height="28" viewBox="0 0 70 28">
+          <polyline points="0,20 12,16 24,18 36,10 48,12 60,8 70,6"
+                    fill="none" stroke="#00ff88" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        </svg>
       </div>
     </div>
 
-    <div class="metric-card fin-card">
-      <div class="metric-icon red"><i class="pi pi-times-circle"></i></div>
-      <div class="metric-info">
+    <div class="metric-card" style="--card-accent: #ff2d4a">
+      <div class="metric-top">
         <span class="metric-label">Inativos</span>
-        <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
-        <span class="metric-value text-error" *ngIf="!loading">{{ totalInativos }}</span>
+        <div class="barcode">
+          <span style="height:14px"></span><span style="height:6px"></span><span style="height:18px"></span>
+          <span style="height:10px"></span><span style="height:20px"></span><span style="height:8px"></span>
+          <span style="height:12px"></span><span style="height:16px"></span>
+        </div>
+      </div>
+      <div class="metric-body">
+        <div class="metric-left">
+          <div class="metric-icon-box red"><i class="pi pi-times-circle"></i></div>
+          <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
+          <span class="metric-value text-error" *ngIf="!loading">{{ totalInativos }}</span>
+        </div>
+        <svg class="sparkline" width="70" height="28" viewBox="0 0 70 28">
+          <polyline points="0,8 12,12 24,10 36,18 48,16 60,22 70,24"
+                    fill="none" stroke="#ff2d4a" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        </svg>
       </div>
     </div>
 
   </div>
 
+  <!-- Body -->
   <div class="dashboard-body">
 
-    <!-- Lista de benefícios -->
-    <div class="fin-card list-card">
-      <div class="card-header">
-        <h3>Benefícios</h3>
-        <p-button label="Ver todos" [text]="true" size="small" icon="pi pi-arrow-right" iconPos="right"
-                  (onClick)="router.navigate(['/beneficios'])">
-        </p-button>
+    <!-- Beneficios table panel -->
+    <div class="main-panel">
+      <div class="panel-header">
+        <span class="panel-title">Benefícios</span>
+        <div class="panel-filters">
+          <div class="filter-toggle on">
+            <span>Data</span>
+            <div class="toggle-dot on"></div>
+          </div>
+          <div class="filter-toggle">
+            <span>Tipo</span>
+            <div class="toggle-dot"></div>
+          </div>
+          <div class="filter-toggle">
+            <span>Status</span>
+            <div class="toggle-dot"></div>
+          </div>
+        </div>
+        <button class="quick-btn" style="width:auto;padding:6px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius);background:transparent;color:var(--accent-primary);font-family:var(--font-title);font-size:12px;letter-spacing:.06em;cursor:pointer"
+                (click)="router.navigate(['/beneficios'])">
+          Ver todos
+        </button>
       </div>
-      <p-divider></p-divider>
 
+      <!-- Skeleton -->
       <div *ngIf="loading">
-        <div class="list-skeleton" *ngFor="let i of [1,2,3]">
-          <p-skeleton shape="circle" size="36px"></p-skeleton>
-          <div class="skeleton-lines">
-            <p-skeleton height="14px" width="50%"></p-skeleton>
-            <p-skeleton height="12px" width="30%"></p-skeleton>
+        <div class="table-row" style="display:flex;gap:12px;padding:12px 18px" *ngFor="let i of [1,2,3]">
+          <p-skeleton shape="square" size="34px"></p-skeleton>
+          <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+            <p-skeleton height="13px" width="40%"></p-skeleton>
+            <p-skeleton height="11px" width="25%"></p-skeleton>
           </div>
         </div>
       </div>
 
-      <div class="beneficio-list" *ngIf="!loading">
-        <div class="beneficio-row" *ngFor="let b of beneficios | slice:0:6"
+      <!-- Table -->
+      <div class="beneficio-table" *ngIf="!loading">
+        <div class="table-head">
+          <span>Tipo</span>
+          <span>Descrição</span>
+          <span>Valor (R$)</span>
+          <span>Tendência</span>
+          <span style="text-align:center">Status</span>
+        </div>
+
+        <div class="table-row" *ngFor="let b of beneficios | slice:0:6"
              (click)="router.navigate(['/beneficios', b.id])">
-          <div class="beneficio-avatar">{{ b.nome.substring(0,2).toUpperCase() }}</div>
-          <div class="beneficio-info">
-            <span class="beneficio-nome">{{ b.nome }}</span>
-            <span class="beneficio-desc text-secondary">{{ b.descricao || 'Sem descrição' }}</span>
+          <div class="row-avatar">{{ b.nome.substring(0,2).toUpperCase() }}</div>
+          <div class="row-desc">
+            <span class="row-nome">{{ b.nome }}</span>
+            <span class="row-sub">{{ b.descricao || 'Sem descrição' }}</span>
           </div>
-          <div class="beneficio-right">
-            <span class="mono text-accent beneficio-valor">{{ b.valor | brlCurrency }}</span>
-            <app-status-badge [ativo]="b.ativo"></app-status-badge>
+          <span class="row-valor">{{ b.valor | brlCurrency }}</span>
+          <svg width="80" height="28" viewBox="0 0 80 28">
+            <polyline [attr.points]="b.ativo
+              ? '0,22 14,18 28,20 42,12 56,14 70,8 80,6'
+              : '0,8 14,12 28,10 42,18 56,16 70,22 80,24'"
+              fill="none"
+              [attr.stroke]="b.ativo ? '#00ff88' : '#ff2d4a'"
+              stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <div class="row-status">
+            <span class="status-pill" [class.ativo]="b.ativo" [class.inativo]="!b.ativo">
+              {{ b.ativo ? 'Ativo' : 'Inativo' }}
+            </span>
           </div>
         </div>
-        <div class="empty-list" *ngIf="beneficios.length === 0">
+
+        <div class="empty-table" *ngIf="beneficios.length === 0">
           <i class="pi pi-inbox"></i>
           <span>Nenhum benefício cadastrado.</span>
         </div>
       </div>
     </div>
 
-    <!-- Ações rápidas + histórico recente -->
+    <!-- Right column -->
     <div class="right-col">
 
-      <div class="fin-card">
-        <h3 class="card-title">Ações rápidas</h3>
-        <p-divider></p-divider>
+      <!-- Quick actions -->
+      <div class="side-panel">
+        <div class="side-panel-title">Ações rápidas</div>
         <div class="quick-actions">
           <button class="quick-btn" (click)="router.navigate(['/beneficios'])">
-            <i class="pi pi-plus-circle"></i>
             <span>Novo Benefício</span>
+            <i class="pi pi-plus"></i>
           </button>
           <button class="quick-btn" (click)="router.navigate(['/transferencia'])">
-            <i class="pi pi-arrow-right-arrow-left"></i>
             <span>Transferir</span>
+            <i class="pi pi-arrow-right-arrow-left"></i>
           </button>
           <button class="quick-btn" (click)="router.navigate(['/historico'])">
-            <i class="pi pi-history"></i>
             <span>Histórico</span>
+            <i class="pi pi-history"></i>
           </button>
         </div>
       </div>
 
-      <div class="fin-card mt-4">
-        <h3 class="card-title">Transferências recentes</h3>
-        <p-divider></p-divider>
+      <!-- Recent transfers -->
+      <div class="side-panel">
+        <div class="side-panel-title">Transferências recentes</div>
+
         <div class="recent-list" *ngIf="transferenciasRecentes.length > 0">
           <div class="recent-row" *ngFor="let t of transferenciasRecentes">
-            <div class="recent-icon" [class.success]="t.status === 'CONCLUIDA'" [class.error]="t.status === 'FALHOU'">
-              <i [class]="t.status === 'CONCLUIDA' ? 'pi pi-check' : 'pi pi-times'"></i>
-            </div>
+            <div class="recent-dot" [class.success]="t.status === 'CONCLUIDA'" [class.error]="t.status === 'FALHOU'"></div>
             <div class="recent-info">
               <span class="recent-label">{{ t.fromNome }} → {{ t.toNome }}</span>
-              <span class="recent-date text-secondary">{{ t.dataHora | date:'dd/MM HH:mm' }}</span>
+              <span class="recent-date">{{ t.dataHora | date:'dd/MM HH:mm' }}</span>
             </div>
-            <span class="mono recent-valor" [class.text-error]="t.status === 'CONCLUIDA'">
-              -{{ t.valor | brlCurrency }}
-            </span>
+            <div class="recent-right">
+              <span class="recent-valor">-{{ t.valor | brlCurrency }}</span>
+              <span class="recent-badge" [class.concluido]="t.status === 'CONCLUIDA'" [class.falhou]="t.status === 'FALHOU'">
+                {{ t.status === 'CONCLUIDA' ? 'CONCLUÍDO' : 'FALHOU' }}
+              </span>
+            </div>
           </div>
         </div>
+
         <div class="empty-list" *ngIf="transferenciasRecentes.length === 0">
           <i class="pi pi-history"></i>
           <span>Nenhuma transferência nesta sessão.</span>
