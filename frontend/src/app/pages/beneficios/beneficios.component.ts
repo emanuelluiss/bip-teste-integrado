@@ -18,9 +18,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
 import { Beneficio, BeneficioRequest } from '../../shared/models/beneficio.model';
 import { BeneficioService } from '../../shared/services/beneficio.service';
-import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
-import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-beneficios',
@@ -30,7 +27,6 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     TableModule, DialogModule, ConfirmDialogModule, ToastModule, ToolbarModule,
     ButtonModule, InputTextModule, InputNumberModule, SelectModule, TagModule,
     SkeletonModule, TooltipModule, CheckboxModule,
-    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
   ],
   templateUrl: './beneficios.component.html',
   styleUrls: ['./beneficios.component.scss']

@@ -15,8 +15,6 @@ import { DividerModule } from 'primeng/divider';
 import { TransferenciaHistorico } from '../../shared/models/beneficio.model';
 import { HistoricoService } from '../../shared/services/historico.service';
 import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
-import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-historico',
@@ -25,7 +23,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     CommonModule, FormsModule,
     TableModule, ButtonModule, TagModule, SelectModule, DatePickerModule,
     ToolbarModule, PanelModule, TimelineModule, InputTextModule, ToastModule, DividerModule,
-    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
+    BrlCurrencyPipe
   ],
   templateUrl: './historico.component.html',
   styleUrls: ['./historico.component.scss']

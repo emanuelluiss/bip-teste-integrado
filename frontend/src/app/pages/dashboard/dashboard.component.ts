@@ -10,13 +10,11 @@ import { Beneficio, TransferenciaHistorico } from '../../shared/models/beneficio
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { HistoricoService } from '../../shared/services/historico.service';
 import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
-import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ButtonModule, SkeletonModule, TagModule, DividerModule, BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent],
+  imports: [CommonModule, ButtonModule, SkeletonModule, TagModule, DividerModule, BrlCurrencyPipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

@@ -16,8 +16,6 @@ import { TagModule } from 'primeng/tag';
 import { Beneficio } from '../../shared/models/beneficio.model';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
-import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
-import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-transferencia',
@@ -26,7 +24,7 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
     CommonModule, FormsModule,
     StepperModule, SelectModule, InputNumberModule, ButtonModule,
     DividerModule, ToastModule, MessageModule, ProgressSpinnerModule, TagModule,
-    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
+    BrlCurrencyPipe
   ],
   templateUrl: './transferencia.component.html',
   styleUrls: ['./transferencia.component.scss']
