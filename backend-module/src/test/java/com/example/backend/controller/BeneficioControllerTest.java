@@ -259,10 +259,10 @@ class BeneficioControllerTest {
     // ── helpers ───────────────────────────────────────────────────────────────
 
     private BeneficioResponse buildResponse(Long id, String nome, String valor, boolean ativo) {
-        com.example.backend.entity.Beneficio e = new com.example.backend.entity.Beneficio(nome, null, new BigDecimal(valor));
+        com.example.ejb.Beneficio e = new com.example.ejb.Beneficio(nome, null, new BigDecimal(valor));
         e.setAtivo(ativo);
         try {
-            java.lang.reflect.Field idField = com.example.backend.entity.Beneficio.class.getDeclaredField("id");
+            java.lang.reflect.Field idField = com.example.ejb.Beneficio.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(e, id);
         } catch (Exception ex) {

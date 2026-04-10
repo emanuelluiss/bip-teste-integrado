@@ -3,10 +3,11 @@ package com.example.backend.service;
 import com.example.backend.dto.BeneficioRequest;
 import com.example.backend.dto.BeneficioResponse;
 import com.example.backend.dto.TransferenciaRequest;
-import com.example.backend.entity.Beneficio;
 import com.example.backend.exception.BeneficioNotFoundException;
 import com.example.backend.exception.SaldoInsuficienteException;
 import com.example.backend.repository.BeneficioRepository;
+import com.example.ejb.Beneficio;
+import com.example.ejb.BeneficioEjbService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,9 @@ class BeneficioServiceTest {
 
     @Mock
     private BeneficioRepository repository;
+
+    @Mock
+    private BeneficioEjbService ejbService;
 
     @InjectMocks
     private BeneficioService service;
@@ -162,42 +166,35 @@ class BeneficioServiceTest {
         verify(repository, never()).deleteById(any());
     }
 
-    // ── transferir ────────────────────────────────────────────────────────────
+    // ── transferir (delegado ao BeneficioEjbService) ─────────────────────────
 
     @Test
-    @DisplayName("transferir() debita origem e credita destino corretamente")
-    void transferir_sucesso() {
-        when(repository.findByIdForUpdate(1L)).thenReturn(Optional.of(beneficioA));
-        when(repository.findByIdForUpdate(2L)).thenReturn(Optional.of(beneficioB));
-
+    @DisplayName("transferir() delega a chamada ao ejbService.transfer()")
+    void transferir_delegaAoEjb() {
         TransferenciaRequest req = buildTransferencia(1L, 2L, "300.00");
         service.transferir(req);
 
-        assertThat(beneficioA.getValor()).isEqualByComparingTo("700.00");
-        assertThat(beneficioB.getValor()).isEqualByComparingTo("800.00");
+        verify(ejbService).transfer(1L, 2L, new BigDecimal("300.00"));
     }
 
     @Test
-    @DisplayName("transferir() com fromId > toId adquire locks em ordem crescente (anti-deadlock)")
-    void transferir_lockOrdemCrescente() {
-        // fromId=2 > toId=1: deve bloquear 1 primeiro, depois 2
-        when(repository.findByIdForUpdate(1L)).thenReturn(Optional.of(beneficioA));
-        when(repository.findByIdForUpdate(2L)).thenReturn(Optional.of(beneficioB));
+    @DisplayName("transferir() lança IllegalArgumentException quando fromId == toId (via EJB)")
+    void transferir_mesmoId() {
+        doThrow(new IllegalArgumentException("fromId e toId não podem ser iguais."))
+            .when(ejbService).transfer(1L, 1L, new BigDecimal("100.00"));
 
-        TransferenciaRequest req = buildTransferencia(2L, 1L, "100.00");
-        service.transferir(req);
+        TransferenciaRequest req = buildTransferencia(1L, 1L, "100.00");
 
-        // beneficioB (id=2) é a origem: debitado
-        assertThat(beneficioB.getValor()).isEqualByComparingTo("400.00");
-        // beneficioA (id=1) é o destino: creditado
-        assertThat(beneficioA.getValor()).isEqualByComparingTo("1100.00");
+        assertThatThrownBy(() -> service.transferir(req))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessageContaining("não podem ser iguais");
     }
 
     @Test
-    @DisplayName("transferir() lança SaldoInsuficienteException quando saldo é insuficiente")
+    @DisplayName("transferir() converte IllegalStateException de saldo insuficiente em SaldoInsuficienteException")
     void transferir_saldoInsuficiente() {
-        when(repository.findByIdForUpdate(1L)).thenReturn(Optional.of(beneficioA));
-        when(repository.findByIdForUpdate(2L)).thenReturn(Optional.of(beneficioB));
+        doThrow(new IllegalStateException("Saldo insuficiente no benefício de origem (id=1). Disponível: 1000.00, Solicitado: 9999.00"))
+            .when(ejbService).transfer(1L, 2L, new BigDecimal("9999.00"));
 
         TransferenciaRequest req = buildTransferencia(1L, 2L, "9999.00");
 
@@ -207,26 +204,29 @@ class BeneficioServiceTest {
     }
 
     @Test
-    @DisplayName("transferir() lança IllegalArgumentException quando fromId == toId")
-    void transferir_mesmoId() {
-        TransferenciaRequest req = buildTransferencia(1L, 1L, "100.00");
-
-        assertThatThrownBy(() -> service.transferir(req))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessageContaining("não podem ser iguais");
-    }
-
-    @Test
-    @DisplayName("transferir() lança BeneficioNotFoundException quando origem não existe")
+    @DisplayName("transferir() converte IllegalStateException de origem não encontrada em BeneficioNotFoundException")
     void transferir_origemNaoEncontrada() {
-        // firstId=1 (menor), lockOrThrow(1) falha antes de chamar lockOrThrow(2)
-        when(repository.findByIdForUpdate(1L)).thenReturn(Optional.empty());
+        doThrow(new IllegalStateException("Benefício de origem não encontrado: id=99"))
+            .when(ejbService).transfer(99L, 2L, new BigDecimal("100.00"));
 
-        TransferenciaRequest req = buildTransferencia(1L, 2L, "100.00");
+        TransferenciaRequest req = buildTransferencia(99L, 2L, "100.00");
 
         assertThatThrownBy(() -> service.transferir(req))
             .isInstanceOf(BeneficioNotFoundException.class)
-            .hasMessageContaining("1");
+            .hasMessageContaining("99");
+    }
+
+    @Test
+    @DisplayName("transferir() converte IllegalStateException de destino não encontrado em BeneficioNotFoundException")
+    void transferir_destinoNaoEncontrado() {
+        doThrow(new IllegalStateException("Benefício de destino não encontrado: id=99"))
+            .when(ejbService).transfer(1L, 99L, new BigDecimal("100.00"));
+
+        TransferenciaRequest req = buildTransferencia(1L, 99L, "100.00");
+
+        assertThatThrownBy(() -> service.transferir(req))
+            .isInstanceOf(BeneficioNotFoundException.class)
+            .hasMessageContaining("99");
     }
 
     // ── helpers ───────────────────────────────────────────────────────────────

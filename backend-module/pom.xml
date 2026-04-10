@@ -47,6 +47,21 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- EJB module: entidade e serviço de transferência -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>ejb-module</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- Jakarta EJB API — anotações usadas pelo ejb-module -->
+        <dependency>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

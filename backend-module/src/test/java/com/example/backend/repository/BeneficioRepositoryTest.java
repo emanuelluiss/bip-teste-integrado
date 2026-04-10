@@ -1,9 +1,10 @@
 package com.example.backend.repository;
 
-import com.example.backend.entity.Beneficio;
+import com.example.ejb.Beneficio;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@EntityScan("com.example.ejb")
 @Sql(scripts = "/schema.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class BeneficioRepositoryTest {
 
@@ -76,25 +78,6 @@ class BeneficioRepositoryTest {
         repository.deleteById(id);
 
         assertThat(repository.findById(id)).isEmpty();
-    }
-
-    // ── findByIdForUpdate ─────────────────────────────────────────────────────
-
-    @Test
-    @DisplayName("findByIdForUpdate() retorna entidade existente com lock")
-    void findByIdForUpdate_encontrado() {
-        Beneficio saved = repository.save(new Beneficio("Lock Test", null, new BigDecimal("300.00")));
-
-        Optional<Beneficio> result = repository.findByIdForUpdate(saved.getId());
-
-        assertThat(result).isPresent();
-        assertThat(result.get().getNome()).isEqualTo("Lock Test");
-    }
-
-    @Test
-    @DisplayName("findByIdForUpdate() retorna Optional vazio para ID inexistente")
-    void findByIdForUpdate_naoEncontrado() {
-        assertThat(repository.findByIdForUpdate(99999L)).isEmpty();
     }
 
     // ── version (optimistic locking) ──────────────────────────────────────────
