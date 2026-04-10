@@ -1,0 +1,93 @@
+<div class="login-shell">
+
+  <!-- Lado esquerdo — branding -->
+  <div class="login-branding">
+    <div class="particles">
+      <span *ngFor="let p of [1,2,3,4,5,6,7,8]" class="particle" [attr.data-n]="p"></span>
+    </div>
+    <div class="brand-content">
+      <div class="brand-logo">
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <polygon points="28,4 52,16 52,40 28,52 4,40 4,16" fill="none" stroke="#00D4FF" stroke-width="2"/>
+          <polygon points="28,14 42,22 42,38 28,46 14,38 14,22" fill="rgba(0,212,255,0.1)" stroke="#00D4FF" stroke-width="1.5"/>
+          <circle cx="28" cy="30" r="6" fill="#00D4FF"/>
+        </svg>
+      </div>
+      <h1 class="brand-title">FinanceApp</h1>
+      <p class="brand-subtitle">Gestão inteligente de benefícios.<br>Seguro, rápido e confiável.</p>
+      <div class="brand-features">
+        <div class="feature" *ngFor="let f of features">
+          <i [class]="f.icon"></i>
+          <span>{{ f.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lado direito — formulário -->
+  <div class="login-form-area">
+    <div class="login-card">
+      <div class="form-header">
+        <h2>Bem-vindo de volta</h2>
+        <p>Entre com suas credenciais para continuar</p>
+      </div>
+
+      <p-message
+        *ngIf="errorMessage"
+        severity="error"
+        [text]="errorMessage"
+        styleClass="w-full mb-4">
+      </p-message>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+        <div class="field">
+          <label for="username">Usuário</label>
+          <input
+            id="username"
+            type="text"
+            pInputText
+            formControlName="username"
+            placeholder="admin"
+            [class.ng-invalid]="username.invalid && username.touched"
+            autocomplete="username" />
+          <small class="error-msg" *ngIf="username.invalid && username.touched">
+            Usuário obrigatório.
+          </small>
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <p-password
+            inputId="password"
+            formControlName="password"
+            placeholder="••••••••"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="w-full"
+            [inputStyleClass]="'w-full' + (password.invalid && password.touched ? ' ng-invalid' : '')">
+          </p-password>
+          <small class="error-msg" *ngIf="password.invalid && password.touched">
+            Senha deve ter no mínimo 6 caracteres.
+          </small>
+        </div>
+
+        <p-button
+          type="submit"
+          label="Entrar"
+          icon="pi pi-sign-in"
+          iconPos="right"
+          styleClass="w-full login-btn"
+          [loading]="loading">
+        </p-button>
+
+      </form>
+
+      <p class="login-hint">
+        <i class="pi pi-info-circle"></i>
+        Use <strong>admin</strong> / <strong>admin123</strong>
+      </p>
+    </div>
+  </div>
+
+</div>
