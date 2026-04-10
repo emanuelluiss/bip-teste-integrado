@@ -1,0 +1,199 @@
+<p-toast></p-toast>
+
+<div class="page-header">
+  <h2 class="page-title">Nova Transferência</h2>
+  <p class="page-subtitle">Transfira valores entre benefícios</p>
+</div>
+
+<div class="transfer-center">
+  <div class="transfer-card fin-card">
+
+    <!-- Sucesso -->
+    <div *ngIf="transferenciaConcluida" class="success-state">
+      <div class="success-icon">
+        <i class="pi pi-check-circle"></i>
+      </div>
+      <h3>Transferência Concluída!</h3>
+      <p>{{ dataHoraTransferencia }}</p>
+      <div class="success-summary">
+        <span class="mono text-accent">{{ origem?.nome }}</span>
+        <i class="pi pi-arrow-right"></i>
+        <span class="mono text-accent">{{ destino?.nome }}</span>
+      </div>
+      <p-button label="Nova Transferência" icon="pi pi-plus" (onClick)="reset()" styleClass="mt-4"></p-button>
+    </div>
+
+    <!-- Stepper -->
+    <p-stepper *ngIf="!transferenciaConcluida" [value]="step" styleClass="transfer-stepper">
+
+      <p-step-list>
+        <p-step [value]="0">Selecionar contas</p-step>
+        <p-step [value]="1">Informar valor</p-step>
+        <p-step [value]="2">Confirmar</p-step>
+      </p-step-list>
+
+      <p-step-panels>
+
+        <!-- ── ETAPA 1 ── -->
+        <p-step-panel [value]="0">
+          <ng-template pTemplate="content">
+            <div class="step-content">
+              <p *ngIf="loadingBeneficios" class="text-secondary">Carregando benefícios...</p>
+
+              <ng-container *ngIf="!loadingBeneficios">
+                <div class="field">
+                  <label>Benefício de Origem</label>
+                  <p-select
+                    [(ngModel)]="fromId"
+                    [options]="beneficios"
+                    optionLabel="nome"
+                    optionValue="id"
+                    placeholder="Selecione a origem"
+                    [filter]="true"
+                    filterPlaceholder="Buscar..."
+                    styleClass="w-full"
+                    (onChange)="onFromChange()">
+                    <ng-template pTemplate="selectedItem" let-item>
+                      <span>{{ item.nome }}</span>
+                      <span class="mono text-secondary ml-2">{{ item.valor | brlCurrency }}</span>
+                    </ng-template>
+                    <ng-template pTemplate="item" let-item>
+                      <div class="select-item">
+                        <span>{{ item.nome }}</span>
+                        <span class="mono text-accent">{{ item.valor | brlCurrency }}</span>
+                      </div>
+                    </ng-template>
+                  </p-select>
+                </div>
+
+                <!-- Card saldo da origem -->
+                <div class="saldo-card" *ngIf="origem">
+                  <span class="saldo-label">Saldo disponível</span>
+                  <span class="saldo-value mono text-accent">{{ origem.valor | brlCurrency }}</span>
+                </div>
+
+                <div class="field">
+                  <label>Benefício de Destino</label>
+                  <p-select
+                    [(ngModel)]="toId"
+                    [options]="destinos"
+                    optionLabel="nome"
+                    optionValue="id"
+                    placeholder="Selecione o destino"
+                    [filter]="true"
+                    filterPlaceholder="Buscar..."
+                    styleClass="w-full"
+                    [disabled]="!fromId">
+                    <ng-template pTemplate="item" let-item>
+                      <div class="select-item">
+                        <span>{{ item.nome }}</span>
+                        <span class="mono text-secondary">{{ item.valor | brlCurrency }}</span>
+                      </div>
+                    </ng-template>
+                  </p-select>
+                </div>
+              </ng-container>
+
+              <div class="step-actions">
+                <p-button label="Próximo" icon="pi pi-arrow-right" iconPos="right" [disabled]="!canGoStep2()" (onClick)="goStep(1)"></p-button>
+              </div>
+            </div>
+          </ng-template>
+        </p-step-panel>
+
+        <!-- ── ETAPA 2 ── -->
+        <p-step-panel [value]="1">
+          <ng-template pTemplate="content">
+            <div class="step-content">
+              <div class="valor-center">
+                <label class="valor-label">Valor a transferir</label>
+                <p-inputnumber
+                  [(ngModel)]="valor"
+                  mode="currency"
+                  currency="BRL"
+                  locale="pt-BR"
+                  [min]="0.01"
+                  styleClass="valor-input"
+                  placeholder="R$ 0,00"
+                  (onInput)="validateValor()">
+                </p-inputnumber>
+                <small class="error-msg" *ngIf="valor && valorError">{{ valorError }}</small>
+                <div class="saldo-disponivel" *ngIf="origem">
+                  Saldo disponível: <span class="mono text-accent">{{ origem.valor | brlCurrency }}</span>
+                </div>
+              </div>
+
+              <!-- Atalhos rápidos -->
+              <div class="atalhos" *ngIf="origem">
+                <button class="atalho-btn" (click)="setPercent(25)">25%</button>
+                <button class="atalho-btn" (click)="setPercent(50)">50%</button>
+                <button class="atalho-btn" (click)="setPercent(75)">75%</button>
+                <button class="atalho-btn" (click)="setPercent(100)">Máximo</button>
+              </div>
+
+              <div class="step-actions">
+                <p-button label="Voltar" icon="pi pi-arrow-left" [text]="true" severity="secondary" (onClick)="goStep(0)"></p-button>
+                <p-button label="Próximo" icon="pi pi-arrow-right" iconPos="right" [disabled]="!canGoStep3()" (onClick)="goStep(2)"></p-button>
+              </div>
+            </div>
+          </ng-template>
+        </p-step-panel>
+
+        <!-- ── ETAPA 3 ── -->
+        <p-step-panel [value]="2">
+          <ng-template pTemplate="content">
+            <div class="step-content">
+
+              <!-- Overlay spinner -->
+              <div class="spinner-overlay" *ngIf="submitting">
+                <p-progressspinner></p-progressspinner>
+              </div>
+
+              <p-message *ngIf="errorMessage" severity="error" [text]="errorMessage" styleClass="w-full mb-3"></p-message>
+
+              <div class="resumo-card fin-card">
+                <h4>Resumo da Transferência</h4>
+                <p-divider></p-divider>
+
+                <div class="resumo-contas">
+                  <div class="conta-box">
+                    <span class="conta-label">Origem</span>
+                    <strong class="conta-nome">{{ origem?.nome }}</strong>
+                    <span class="mono text-secondary">{{ origem?.valor | brlCurrency }}</span>
+                  </div>
+                  <div class="arrow-anim">
+                    <i class="pi pi-arrow-right"></i>
+                  </div>
+                  <div class="conta-box">
+                    <span class="conta-label">Destino</span>
+                    <strong class="conta-nome">{{ destino?.nome }}</strong>
+                    <span class="mono text-secondary">{{ destino?.valor | brlCurrency }}</span>
+                  </div>
+                </div>
+
+                <p-divider></p-divider>
+
+                <div class="resumo-valor">
+                  <span>Valor</span>
+                  <span class="mono text-accent valor-grande">{{ valor | brlCurrency }}</span>
+                </div>
+
+                <div class="resumo-data text-secondary">
+                  <i class="pi pi-clock"></i>
+                  {{ 'Agora · ' + ('' | date:'dd/MM/yyyy HH:mm' | date:'dd/MM/yyyy HH:mm') }}
+                </div>
+              </div>
+
+              <div class="step-actions">
+                <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="danger" (onClick)="reset()" [disabled]="submitting"></p-button>
+                <p-button label="Confirmar Transferência" icon="pi pi-check" (onClick)="confirmar()" [loading]="submitting" [disabled]="submitting"></p-button>
+              </div>
+            </div>
+          </ng-template>
+        </p-step-panel>
+
+      </p-step-panels>
+    </p-stepper>
+
+  </div>
+</div>
