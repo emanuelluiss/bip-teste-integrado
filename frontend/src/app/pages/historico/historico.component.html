@@ -1,0 +1,127 @@
+<p-toast></p-toast>
+
+<div class="page-header">
+  <div>
+    <h2 class="page-title">Histórico de Transações</h2>
+    <p class="page-subtitle">Registro de todas as transferências desta sessão</p>
+  </div>
+  <div class="header-actions">
+    <p-button label="Exportar CSV" icon="pi pi-download" [outlined]="true" size="small" (onClick)="exportCsv()" [disabled]="filtered.length === 0"></p-button>
+    <p-button label="Limpar" icon="pi pi-trash" severity="danger" [text]="true" size="small" (onClick)="limparHistorico()" [disabled]="all.length === 0"></p-button>
+  </div>
+</div>
+
+<!-- Filtros -->
+<p-toolbar styleClass="mb-4">
+  <ng-template pTemplate="start">
+    <div class="filtros">
+      <span class="filter-wrapper">
+        <i class="pi pi-search filter-icon"></i>
+        <input type="text" pInputText [(ngModel)]="busca" placeholder="Buscar benefício..." class="filter-input" (input)="aplicarFiltros()" />
+      </span>
+      <p-select [(ngModel)]="tipoFiltro" [options]="tipoOptions" optionLabel="label" optionValue="value" placeholder="Status" styleClass="filtro-select" (onChange)="aplicarFiltros()"></p-select>
+      <p-button label="Limpar filtros" [text]="true" severity="secondary" size="small" (onClick)="limparFiltros()"></p-button>
+    </div>
+  </ng-template>
+</p-toolbar>
+
+<!-- Metric cards -->
+<div class="metric-cards mb-4">
+  <div class="metric-card fin-card">
+    <span class="metric-label">Total</span>
+    <span class="metric-value">{{ filtered.length }}</span>
+  </div>
+  <div class="metric-card fin-card">
+    <span class="metric-label">Concluídas</span>
+    <span class="metric-value text-success">{{ totalConcluidas }}</span>
+  </div>
+  <div class="metric-card fin-card">
+    <span class="metric-label">Falhou</span>
+    <span class="metric-value text-error">{{ totalFalhou }}</span>
+  </div>
+  <div class="metric-card fin-card">
+    <span class="metric-label">Volume transferido</span>
+    <span class="metric-value mono text-accent">{{ totalEnviado | brlCurrency }}</span>
+  </div>
+</div>
+
+<div class="historico-layout">
+
+  <!-- Tabela principal -->
+  <div class="table-area">
+    <div class="table-card">
+      <p-table
+        [value]="filtered"
+        [paginator]="true"
+        [rows]="15"
+        [rowsPerPageOptions]="[15, 30, 50]"
+        styleClass="p-datatable-sm"
+        responsiveLayout="scroll">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="dataHora">Data/Hora <p-sortIcon field="dataHora"></p-sortIcon></th>
+            <th>Origem</th>
+            <th>Destino</th>
+            <th pSortableColumn="valor">Valor <p-sortIcon field="valor"></p-sortIcon></th>
+            <th>Status</th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-t>
+          <tr [class.selected-row]="selectedRow?.id === t.id"
+              [class.row-success]="t.status === 'CONCLUIDA'"
+              [class.row-error]="t.status === 'FALHOU'"
+              (click)="selecionarLinha(t)"
+              class="clickable-row">
+            <td class="mono text-secondary">{{ t.dataHora | date:'dd/MM/yy HH:mm' }}</td>
+            <td>{{ t.fromNome }}</td>
+            <td>{{ t.toNome }}</td>
+            <td>
+              <span class="mono" [class.text-error]="t.status === 'CONCLUIDA'" *ngIf="t.status === 'CONCLUIDA'">-{{ t.valor | brlCurrency }}</span>
+              <span class="mono text-secondary" *ngIf="t.status === 'FALHOU'">{{ t.valor | brlCurrency }}</span>
+            </td>
+            <td>
+              <p-tag [value]="t.status === 'CONCLUIDA' ? 'Concluída' : 'Falhou'" [severity]="t.status === 'CONCLUIDA' ? 'success' : 'danger'"></p-tag>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr><td colspan="5" class="empty-message">
+            <i class="pi pi-history"></i>
+            <span>Nenhuma transferência registrada nesta sessão.</span>
+          </td></tr>
+        </ng-template>
+
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Timeline lateral -->
+  <div class="timeline-panel fin-card" [class.open]="selectedRow" *ngIf="selectedRow">
+    <div class="timeline-header">
+      <h4>Detalhes da operação</h4>
+      <button class="close-btn" (click)="selectedRow = null"><i class="pi pi-times"></i></button>
+    </div>
+    <p-divider></p-divider>
+    <div class="timeline-meta">
+      <span class="text-secondary">{{ selectedRow.dataHora | date:'dd/MM/yyyy HH:mm' }}</span>
+      <span class="mono text-accent">{{ selectedRow.valor | brlCurrency }}</span>
+    </div>
+    <p-timeline [value]="timelineItems" styleClass="custom-timeline">
+      <ng-template pTemplate="marker" let-item>
+        <span class="timeline-marker" [style.background]="item.color">
+          <i [class]="item.icon" style="font-size:11px"></i>
+        </span>
+      </ng-template>
+      <ng-template pTemplate="content" let-item>
+        <div class="timeline-content">
+          <span class="tl-label">{{ item.label }}</span>
+          <span class="tl-time text-secondary">{{ item.time }}</span>
+        </div>
+      </ng-template>
+    </p-timeline>
+  </div>
+
+</div>
