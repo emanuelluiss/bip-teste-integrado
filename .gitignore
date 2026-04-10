@@ -1,0 +1,20 @@
+# Compiled output
+target/
+*.class
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+untitled/
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
