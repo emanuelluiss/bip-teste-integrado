@@ -55,6 +55,13 @@
         <button class="icon-btn" pRipple>
           <i class="pi pi-bell"></i>
         </button>
+        <button class="theme-toggle" (click)="theme.toggle()" [attr.aria-label]="theme.isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro'" pRipple>
+          <div class="toggle-track" [class.light]="!theme.isDark">
+            <i class="pi pi-moon toggle-icon-dark"></i>
+            <i class="pi pi-sun toggle-icon-light"></i>
+            <div class="toggle-thumb" [class.light]="!theme.isDark"></div>
+          </div>
+        </button>
         <div class="topbar-user">
           <div class="user-avatar-sm">{{ initials }}</div>
           <span>{{ username }}</span>

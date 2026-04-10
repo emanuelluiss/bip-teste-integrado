@@ -28,6 +28,29 @@
 }
 
 /* ============================================================
+   LIGHT THEME OVERRIDE
+   ============================================================ */
+html:not(.app-dark) {
+  --bg-primary:      #f0f5fa;
+  --bg-secondary:    #e6eef6;
+  --bg-card:         #ffffff;
+  --bg-elevated:     #eaf1f8;
+  --text-primary:    #0d1b2a;
+  --text-secondary:  #4a6a8a;
+  --border-subtle:   rgba(0,120,180,0.13);
+  --border-active:   rgba(0,140,190,0.55);
+  --border-pink:     rgba(160,26,176,0.4);
+  --accent-primary:  #0088aa;
+  --accent-secondary:#5b10cc;
+  --accent-pink:     #a01ab0;
+  --success:         #00885a;
+  --error:           #cc1030;
+  --warning:         #b87800;
+  --glow-cyan:       0 0 16px rgba(0,136,170,0.15), 0 0 32px rgba(0,136,170,0.07);
+  --glow-pink:       0 0 16px rgba(160,26,176,0.18);
+}
+
+/* ============================================================
    RESET / BASE
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

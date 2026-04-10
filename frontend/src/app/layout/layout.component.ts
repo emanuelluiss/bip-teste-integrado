@@ -8,6 +8,7 @@ import { RippleModule } from 'primeng/ripple';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../core/services/auth.service';
+import { ThemeService } from '../core/services/theme.service';
 
 interface NavItem {
   label: string;
@@ -41,7 +42,7 @@ export class LayoutComponent implements OnInit {
     '/dashboard': 'Dashboard'
   };
 
-  constructor(public auth: AuthService, private router: Router) {}
+  constructor(public auth: AuthService, public theme: ThemeService, private router: Router) {}
 
   ngOnInit(): void {
     this.router.events.pipe(
