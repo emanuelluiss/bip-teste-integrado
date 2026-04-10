@@ -7,7 +7,7 @@ import { MessageService } from 'primeng/api';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { HistoricoService } from '../../shared/services/historico.service';
 import { Beneficio } from '../../shared/models/beneficio.model';
-import { of } from 'rxjs';
+import { of, BehaviorSubject } from 'rxjs';
 
 const mockBeneficios: Beneficio[] = [
   { id: 1, nome: 'A', descricao: '', valor: 1000, ativo: true, version: 0 },
@@ -20,7 +20,10 @@ describe('TransferenciaComponent — validação de saldo', () => {
   let serviceSpy: jasmine.SpyObj<BeneficioService>;
 
   beforeEach(async () => {
-    serviceSpy = jasmine.createSpyObj('BeneficioService', ['listar', 'transferir']);
+    const beneficiosSubject = new BehaviorSubject(mockBeneficios);
+    serviceSpy = jasmine.createSpyObj('BeneficioService', ['listar', 'transferir'], {
+      beneficios$: beneficiosSubject.asObservable()
+    });
     serviceSpy.listar.and.returnValue(of(mockBeneficios));
 
     await TestBed.configureTestingModule({

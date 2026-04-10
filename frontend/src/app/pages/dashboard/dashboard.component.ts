@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -19,11 +20,12 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   beneficios: Beneficio[] = [];
   transferencias: TransferenciaHistorico[] = [];
   loading = true;
   filterAtivos = true;
+  private subs = new Subscription();
 
   constructor(
     private service: BeneficioService,
@@ -32,12 +34,17 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.service.listar().subscribe({
-      next: data => { this.beneficios = data; this.loading = false; },
-      error: () => { this.loading = false; }
-    });
-    this.historico.historico$.subscribe(data => { this.transferencias = data; });
+    this.subs.add(
+      this.service.beneficios$.subscribe(data => {
+        this.beneficios = data;
+        if (data.length > 0) this.loading = false;
+      })
+    );
+    this.service.listar().subscribe({ error: () => { this.loading = false; } });
+    this.subs.add(this.historico.historico$.subscribe(data => { this.transferencias = data; }));
   }
+
+  ngOnDestroy(): void { this.subs.unsubscribe(); }
 
   get totalValor(): number {
     return this.beneficios.reduce((s, b) => s + b.valor, 0);

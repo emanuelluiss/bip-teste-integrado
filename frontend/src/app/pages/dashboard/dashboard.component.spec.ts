@@ -6,7 +6,7 @@ import { DashboardComponent } from './dashboard.component';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { HistoricoService } from '../../shared/services/historico.service';
 import { Beneficio, TransferenciaHistorico } from '../../shared/models/beneficio.model';
-import { of, BehaviorSubject } from 'rxjs';
+import { of, BehaviorSubject, Subject } from 'rxjs';
 
 const mockBeneficios: Beneficio[] = [
   { id: 1, nome: 'Alimentação', descricao: 'Vale alimentação', valor: 800,  ativo: true,  version: 0 },
@@ -24,10 +24,14 @@ describe('DashboardComponent', () => {
   let fixture: ComponentFixture<DashboardComponent>;
   let serviceSpy: jasmine.SpyObj<BeneficioService>;
   let historicoSubject: BehaviorSubject<TransferenciaHistorico[]>;
+  let beneficiosSubject: BehaviorSubject<Beneficio[]>;
 
   beforeEach(async () => {
-    historicoSubject = new BehaviorSubject<TransferenciaHistorico[]>([]);
-    serviceSpy = jasmine.createSpyObj('BeneficioService', ['listar']);
+    historicoSubject  = new BehaviorSubject<TransferenciaHistorico[]>([]);
+    beneficiosSubject = new BehaviorSubject<Beneficio[]>(mockBeneficios);
+    serviceSpy = jasmine.createSpyObj('BeneficioService', ['listar'], {
+      beneficios$: beneficiosSubject.asObservable()
+    });
     serviceSpy.listar.and.returnValue(of(mockBeneficios));
 
     await TestBed.configureTestingModule({
@@ -95,11 +99,15 @@ describe('DashboardComponent', () => {
     expect(component.transferenciasRecentes[0].status).toBe('CONCLUIDA');
   });
 
-  it('deve ter loading=false após erro no serviço', () => {
-    const errorSpy = jasmine.createSpyObj('BeneficioService', ['listar']);
-    errorSpy.listar.and.returnValue(of([]));
+  it('deve atualizar beneficios quando beneficios$ emitir novos dados', () => {
+    const novo: Beneficio = { id: 4, nome: 'Novo', descricao: '', valor: 100, ativo: true, version: 0 };
+    beneficiosSubject.next([...mockBeneficios, novo]);
+    expect(component.beneficios.length).toBe(4);
+  });
+
+  it('deve ter loading=false após beneficios$ emitir dados', () => {
     component.loading = true;
-    component.ngOnInit();
+    beneficiosSubject.next(mockBeneficios);
     expect(component.loading).toBeFalse();
   });
 });

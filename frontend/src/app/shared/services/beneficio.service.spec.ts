@@ -32,6 +32,12 @@ describe('BeneficioService', () => {
     http.expectOne(BASE).flush([mockBeneficio]);
   });
 
+  it('deve atualizar beneficios$ após listar', () => {
+    service.listar().subscribe();
+    http.expectOne(BASE).flush([mockBeneficio]);
+    service.beneficios$.subscribe(data => expect(data[0].id).toBe(1));
+  });
+
   it('deve emitir erro amigável em 404', () => {
     service.buscar(99).subscribe({
       error: (err: Error) => expect(err.message).toBe('Recurso não encontrado.')

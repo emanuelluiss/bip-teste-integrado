@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -30,11 +31,12 @@ import { StatusBadgeComponent } from '../../shared/components/status-badge/statu
   templateUrl: './transferencia.component.html',
   styleUrls: ['./transferencia.component.scss']
 })
-export class TransferenciaComponent implements OnInit {
+export class TransferenciaComponent implements OnInit, OnDestroy {
   step = 0;
   beneficios: Beneficio[] = [];
   loadingBeneficios = true;
   submitting = false;
+  private sub = new Subscription();
 
   fromId: number | null = null;
   toId:   number | null = null;
@@ -51,16 +53,16 @@ export class TransferenciaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.service.listar().subscribe({
-      next: data => {
-        this.beneficios = data.filter(b => b.ativo);
-        this.loadingBeneficios = false;
-        const preSelected = this.route.snapshot.queryParamMap.get('fromId');
-        if (preSelected) this.fromId = +preSelected;
-      },
-      error: () => { this.loadingBeneficios = false; }
+    this.sub = this.service.beneficios$.subscribe(data => {
+      this.beneficios = data.filter(b => b.ativo);
+      if (data.length > 0) this.loadingBeneficios = false;
     });
+    this.service.listar().subscribe({ error: () => { this.loadingBeneficios = false; } });
+    const preSelected = this.route.snapshot.queryParamMap.get('fromId');
+    if (preSelected) this.fromId = +preSelected;
   }
+
+  ngOnDestroy(): void { this.sub.unsubscribe(); }
 
   get destinos(): Beneficio[] {
     return this.beneficios.filter(b => b.id !== this.fromId);
