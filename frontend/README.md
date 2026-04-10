@@ -1,4 +1,4 @@
-# <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgiIGhlaWdodD0iMjgiIHZpZXdCb3g9IjAgMCAyOCAyOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWdvbiBwb2ludHM9IjE0LDIgMjYsOCAyNiwyMCAxNCwyNiAyLDIwIDIsOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDBlNWZmIiBzdHJva2Utd2lkdGg9IjEuNSIvPjxwb2x5Z29uIHBvaW50cz0iMTQsNyAyMSwxMSAyMSwxOSAxNCwyMyA3LDE5IDcsMTEiIGZpbGw9InJnYmEoMCwyMjksMjU1LDAuMTUpIiBzdHJva2U9IiMwMGU1ZmYiIHN0cm9rZS13aWR0aD0iMSIvPjxjaXJjbGUgY3g9IjE0IiBjeT0iMTUiIHI9IjMiIGZpbGw9IiMwMGU1ZmYiLz48L3N2Zz4=" alt="FinanceApp Logo" height="28" style="vertical-align:middle"/> FinanceApp
+# <img src="assets/logo.svg" alt="FinanceApp Logo" height="28" style="vertical-align:middle"/> FinanceApp
 
 ![Angular](https://img.shields.io/badge/Angular-19.2-dd0031?style=flat&logo=angular&logoColor=dd0031)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat&logo=typescript)
