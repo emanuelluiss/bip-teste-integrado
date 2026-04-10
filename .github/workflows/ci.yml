@@ -12,5 +12,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build all modules
-        run: mvn -B clean package
+      - name: Build ejb-module
+        run: mvn -B -f ejb-module clean install
+      - name: Build backend
+        run: mvn -B -f backend-module clean package
