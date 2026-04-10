@@ -1,8 +1,8 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { BeneficiosComponent } from './beneficios.component';
-import { BeneficiosModule } from './beneficios.module';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Beneficio } from '../../shared/models/beneficio.model';
@@ -23,7 +23,7 @@ describe('BeneficiosComponent', () => {
     serviceSpy.listar.and.returnValue(of(mockBeneficios));
 
     await TestBed.configureTestingModule({
-      imports: [BeneficiosModule, HttpClientTestingModule, RouterTestingModule],
+      imports: [BeneficiosComponent, HttpClientTestingModule, RouterTestingModule, NoopAnimationsModule],
       providers: [
         MessageService, ConfirmationService,
         { provide: BeneficioService, useValue: serviceSpy }

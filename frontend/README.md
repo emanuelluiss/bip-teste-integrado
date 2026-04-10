@@ -158,7 +158,7 @@ curl -X POST http://localhost:8080/api/v1/beneficios/transferencia \
 * **UI Library:** PrimeNG 19.1 + PrimeIcons + PrimeFlex
 * **Gráficos:** Chart.js 4
 * **Testes Unitários:** Jasmine + Karma
-* **Estilo:** SCSS com design system próprio (dark mode)
+* **Estilo:** SCSS com design system próprio — tema **Cyberpunk** (dark mode)
 * **Arquitetura:** Standalone por Feature com camada Shared e Core isolada
 
 ## 📋 Pré-requisitos
@@ -300,3 +300,5 @@ src/app
 * **Guard e Interceptor Funcionais:** <br>O `AuthGuard` é implementado como `CanActivateFn` e o `AuthInterceptor` como `HttpInterceptorFn` — o padrão funcional do Angular 19, sem classes e sem `@Injectable`. O interceptor é registrado via `provideHttpClient(withInterceptors([authInterceptor]))` no bootstrap, eliminando o token legado `HTTP_INTERCEPTORS`.
 
 * **Testes com `NoopAnimationsModule`:** <br>Componentes que usam `p-stepper` ou outros elementos PrimeNG animados requerem `NoopAnimationsModule` nos testes. Sem ele, o Angular lança `NG05105: Unexpected synthetic property @content found`. A inclusão do módulo desabilita as animações sem afetar a lógica testada.
+
+* **Design System Cyberpunk:** <br>O frontend adota um visual **cyberpunk** com paleta escura (fundo `#030c18`), detalhes em ciano (`#00e5ff`) e magenta (`#d946ef`), tipografia técnica via fonte `Rajdhani`, bordas com glow neon e elementos decorativos como barcodes e sparklines SVG inline. O tema é aplicado globalmente via variáveis CSS no `styles.scss` e sobrescreve o tema Aura do PrimeNG, mantendo coerência visual em todos os componentes.

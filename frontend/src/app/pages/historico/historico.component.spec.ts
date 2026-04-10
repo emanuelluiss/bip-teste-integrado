@@ -1,7 +1,7 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HistoricoComponent } from './historico.component';
-import { HistoricoModule } from './historico.module';
 import { HistoricoService } from '../../shared/services/historico.service';
 import { TransferenciaHistorico } from '../../shared/models/beneficio.model';
 import { BehaviorSubject } from 'rxjs';
@@ -28,7 +28,7 @@ describe('HistoricoComponent', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [HistoricoModule, RouterTestingModule],
+      imports: [HistoricoComponent, RouterTestingModule, NoopAnimationsModule],
       providers: [
         MessageService,
         { provide: HistoricoService, useValue: historicoSpy }

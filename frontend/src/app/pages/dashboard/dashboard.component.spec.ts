@@ -1,8 +1,8 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { DashboardComponent } from './dashboard.component';
-import { DashboardModule } from './dashboard.module';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { HistoricoService } from '../../shared/services/historico.service';
 import { Beneficio, TransferenciaHistorico } from '../../shared/models/beneficio.model';
@@ -31,13 +31,10 @@ describe('DashboardComponent', () => {
     serviceSpy.listar.and.returnValue(of(mockBeneficios));
 
     await TestBed.configureTestingModule({
-      imports: [DashboardModule, HttpClientTestingModule, RouterTestingModule],
+      imports: [DashboardComponent, HttpClientTestingModule, RouterTestingModule, NoopAnimationsModule],
       providers: [
         { provide: BeneficioService, useValue: serviceSpy },
-        {
-          provide: HistoricoService,
-          useValue: { historico$: historicoSubject.asObservable() }
-        }
+        { provide: HistoricoService, useValue: { historico$: historicoSubject.asObservable() } }
       ]
     }).compileComponents();
 
@@ -65,6 +62,22 @@ describe('DashboardComponent', () => {
 
   it('deve calcular totalInativos (somente ativo=false)', () => {
     expect(component.totalInativos).toBe(1);
+  });
+
+  it('deve iniciar com filterAtivos=true', () => {
+    expect(component.filterAtivos).toBeTrue();
+  });
+
+  it('deve retornar apenas ativos em beneficiosFiltrados quando filterAtivos=true', () => {
+    component.filterAtivos = true;
+    expect(component.beneficiosFiltrados.length).toBe(2);
+    expect(component.beneficiosFiltrados.every(b => b.ativo)).toBeTrue();
+  });
+
+  it('deve retornar apenas inativos em beneficiosFiltrados quando filterAtivos=false', () => {
+    component.filterAtivos = false;
+    expect(component.beneficiosFiltrados.length).toBe(1);
+    expect(component.beneficiosFiltrados[0].ativo).toBeFalse();
   });
 
   it('deve retornar no máximo 5 transferências recentes', () => {
