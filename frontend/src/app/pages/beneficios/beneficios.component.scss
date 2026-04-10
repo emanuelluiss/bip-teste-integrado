@@ -1,0 +1,88 @@
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.page-subtitle { color: var(--text-secondary); font-size: 13px; }
+
+.filter-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  z-index: 1;
+}
+
+.filter-input {
+  padding-left: 32px !important;
+  width: 280px;
+}
+
+.record-count {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.action-btns {
+  display: flex;
+  gap: 2px;
+}
+
+.empty-message {
+  text-align: center;
+  padding: 48px 0 !important;
+  color: var(--text-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  i { font-size: 32px; opacity: 0.4; }
+}
+
+/* Dialog fields */
+.dialog-fields { display: flex; flex-direction: column; gap: 16px; padding: 8px 0; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.field-inline { display: flex; align-items: center; gap: 10px; }
+
+.error-msg { color: var(--error); font-size: 11px; }
+
+.w-full { width: 100%; }
+.mb-4   { margin-bottom: 16px; }
