@@ -14,7 +14,8 @@ const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: [
-      { path: '', redirectTo: 'beneficios', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', loadChildren: () => import('../pages/dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'beneficios', loadChildren: () => import('../pages/beneficios/beneficios.module').then(m => m.BeneficiosModule) },
       { path: 'transferencia', loadChildren: () => import('../pages/transferencia/transferencia.module').then(m => m.TransferenciaModule) },
       { path: 'historico', loadChildren: () => import('../pages/historico/historico.module').then(m => m.HistoricoModule) }

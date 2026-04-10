@@ -21,7 +21,7 @@ export class LayoutComponent implements OnInit {
   currentRoute = '';
 
   navItems: NavItem[] = [
-    { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard', badge: 'Em breve' },
+    { label: 'Dashboard', icon: 'pi pi-home', route: '/dashboard' },
     { label: 'Benefícios', icon: 'pi pi-wallet', route: '/beneficios' },
     { label: 'Transferências', icon: 'pi pi-arrow-right-arrow-left', route: '/transferencia' },
     { label: 'Histórico', icon: 'pi pi-history', route: '/historico' }

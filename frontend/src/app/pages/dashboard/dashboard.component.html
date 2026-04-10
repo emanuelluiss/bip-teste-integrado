@@ -1,0 +1,143 @@
+<div class="dashboard">
+
+  <div class="page-header">
+    <div>
+      <h2 class="page-title">Dashboard</h2>
+      <p class="page-subtitle">Visão geral do sistema</p>
+    </div>
+    <p-button label="Nova Transferência" icon="pi pi-arrow-right-arrow-left"
+              (onClick)="router.navigate(['/transferencia'])">
+    </p-button>
+  </div>
+
+  <!-- Metric cards -->
+  <div class="metric-grid">
+
+    <div class="metric-card fin-card" (click)="router.navigate(['/beneficios'])">
+      <div class="metric-icon blue"><i class="pi pi-wallet"></i></div>
+      <div class="metric-info">
+        <span class="metric-label">Total de Benefícios</span>
+        <p-skeleton *ngIf="loading" height="2rem" width="60px"></p-skeleton>
+        <span class="metric-value" *ngIf="!loading">{{ beneficios.length }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card fin-card">
+      <div class="metric-icon cyan"><i class="pi pi-dollar"></i></div>
+      <div class="metric-info">
+        <span class="metric-label">Valor Total</span>
+        <p-skeleton *ngIf="loading" height="2rem" width="120px"></p-skeleton>
+        <span class="metric-value mono text-accent" *ngIf="!loading">{{ totalValor | brlCurrency }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card fin-card">
+      <div class="metric-icon green"><i class="pi pi-check-circle"></i></div>
+      <div class="metric-info">
+        <span class="metric-label">Ativos</span>
+        <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
+        <span class="metric-value text-success" *ngIf="!loading">{{ totalAtivos }}</span>
+      </div>
+    </div>
+
+    <div class="metric-card fin-card">
+      <div class="metric-icon red"><i class="pi pi-times-circle"></i></div>
+      <div class="metric-info">
+        <span class="metric-label">Inativos</span>
+        <p-skeleton *ngIf="loading" height="2rem" width="40px"></p-skeleton>
+        <span class="metric-value text-error" *ngIf="!loading">{{ totalInativos }}</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="dashboard-body">
+
+    <!-- Lista de benefícios -->
+    <div class="fin-card list-card">
+      <div class="card-header">
+        <h3>Benefícios</h3>
+        <p-button label="Ver todos" [text]="true" size="small" icon="pi pi-arrow-right" iconPos="right"
+                  (onClick)="router.navigate(['/beneficios'])">
+        </p-button>
+      </div>
+      <p-divider></p-divider>
+
+      <div *ngIf="loading">
+        <div class="list-skeleton" *ngFor="let i of [1,2,3]">
+          <p-skeleton shape="circle" size="36px"></p-skeleton>
+          <div class="skeleton-lines">
+            <p-skeleton height="14px" width="50%"></p-skeleton>
+            <p-skeleton height="12px" width="30%"></p-skeleton>
+          </div>
+        </div>
+      </div>
+
+      <div class="beneficio-list" *ngIf="!loading">
+        <div class="beneficio-row" *ngFor="let b of beneficios | slice:0:6"
+             (click)="router.navigate(['/beneficios', b.id])">
+          <div class="beneficio-avatar">{{ b.nome.substring(0,2).toUpperCase() }}</div>
+          <div class="beneficio-info">
+            <span class="beneficio-nome">{{ b.nome }}</span>
+            <span class="beneficio-desc text-secondary">{{ b.descricao || 'Sem descrição' }}</span>
+          </div>
+          <div class="beneficio-right">
+            <span class="mono text-accent beneficio-valor">{{ b.valor | brlCurrency }}</span>
+            <app-status-badge [ativo]="b.ativo"></app-status-badge>
+          </div>
+        </div>
+        <div class="empty-list" *ngIf="beneficios.length === 0">
+          <i class="pi pi-inbox"></i>
+          <span>Nenhum benefício cadastrado.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ações rápidas + histórico recente -->
+    <div class="right-col">
+
+      <div class="fin-card">
+        <h3 class="card-title">Ações rápidas</h3>
+        <p-divider></p-divider>
+        <div class="quick-actions">
+          <button class="quick-btn" (click)="router.navigate(['/beneficios'])">
+            <i class="pi pi-plus-circle"></i>
+            <span>Novo Benefício</span>
+          </button>
+          <button class="quick-btn" (click)="router.navigate(['/transferencia'])">
+            <i class="pi pi-arrow-right-arrow-left"></i>
+            <span>Transferir</span>
+          </button>
+          <button class="quick-btn" (click)="router.navigate(['/historico'])">
+            <i class="pi pi-history"></i>
+            <span>Histórico</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="fin-card mt-4">
+        <h3 class="card-title">Transferências recentes</h3>
+        <p-divider></p-divider>
+        <div class="recent-list" *ngIf="transferenciasRecentes.length > 0">
+          <div class="recent-row" *ngFor="let t of transferenciasRecentes">
+            <div class="recent-icon" [class.success]="t.status === 'CONCLUIDA'" [class.error]="t.status === 'FALHOU'">
+              <i [class]="t.status === 'CONCLUIDA' ? 'pi pi-check' : 'pi pi-times'"></i>
+            </div>
+            <div class="recent-info">
+              <span class="recent-label">{{ t.fromNome }} → {{ t.toNome }}</span>
+              <span class="recent-date text-secondary">{{ t.dataHora | date:'dd/MM HH:mm' }}</span>
+            </div>
+            <span class="mono recent-valor" [class.text-error]="t.status === 'CONCLUIDA'">
+              -{{ t.valor | brlCurrency }}
+            </span>
+          </div>
+        </div>
+        <div class="empty-list" *ngIf="transferenciasRecentes.length === 0">
+          <i class="pi pi-history"></i>
+          <span>Nenhuma transferência nesta sessão.</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
