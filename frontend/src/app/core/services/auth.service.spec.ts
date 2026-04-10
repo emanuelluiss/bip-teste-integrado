@@ -1,12 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AuthService } from './auth.service';
+import { HistoricoService } from '../../shared/services/historico.service';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let historicoSpy: jasmine.SpyObj<HistoricoService>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ imports: [RouterTestingModule], providers: [AuthService] });
+    historicoSpy = jasmine.createSpyObj('HistoricoService', ['limpar']);
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule],
+      providers: [
+        AuthService,
+        { provide: HistoricoService, useValue: historicoSpy }
+      ]
+    });
     service = TestBed.inject(AuthService);
     localStorage.clear();
   });
@@ -26,10 +35,11 @@ describe('AuthService', () => {
     expect(service.isLoggedIn).toBeFalse();
   });
 
-  it('deve fazer logout limpando localStorage', () => {
+  it('deve fazer logout limpando localStorage e o histórico', () => {
     service.login('admin', 'admin123');
     service.logout();
     expect(service.isLoggedIn).toBeFalse();
     expect(service.currentUser).toBeNull();
+    expect(historicoSpy.limpar).toHaveBeenCalled();
   });
 });

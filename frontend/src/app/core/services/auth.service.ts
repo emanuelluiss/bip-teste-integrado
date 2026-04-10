@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { HistoricoService } from '../../shared/services/historico.service';
 
 export interface AuthUser {
   username: string;
@@ -15,7 +16,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.loadUser());
   readonly currentUser$: Observable<AuthUser | null> = this.currentUserSubject.asObservable();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private historico: HistoricoService) {}
 
   login(username: string, password: string): boolean {
     if (username === 'admin' && password === 'admin123') {
@@ -32,6 +33,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+    this.historico.limpar();
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
