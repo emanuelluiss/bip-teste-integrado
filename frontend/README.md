@@ -24,7 +24,7 @@
 6. Testes Automatizados (Jasmine/Karma + JUnit/Mockito)
 7. Design System com Dark Mode
 
-🧠 **Resolução**: <p>Sistema fullstack de gestão de benefícios financeiros. O backend foi desenvolvido com Spring Boot 3, Spring Data JPA e H2, implementando locking pessimista e versionamento otimista para transferências seguras e livres de deadlock. O frontend foi desenvolvido com Angular 19 e PrimeNG 19, aplicando arquitetura modular, controle de estado reativo via RxJS e persistência de histórico em localStorage. O projeto inclui 111 testes automatizados (42 no backend + 69 no frontend).</p>
+🧠 **Resolução**: <p>Sistema fullstack de gestão de benefícios financeiros. O backend é um projeto Maven multi-módulo: o <strong>ejb-module</strong> encapsula a entidade `Beneficio`, a lógica de transferência e o optimistic locking com `OPTIMISTIC_FORCE_INCREMENT`; o <strong>backend-module</strong> expõe a API REST Spring Boot que delega transferências ao EJB. O frontend foi desenvolvido com Angular 19 e PrimeNG 19, aplicando arquitetura modular, controle de estado reativo via RxJS e persistência de histórico em localStorage. O projeto inclui 123 testes automatizados (54 no backend + 69 no frontend).</p>
 
 ---
 
@@ -33,6 +33,8 @@
 ## 🛠️ Tecnologias
 
 - Java 17
+- Jakarta EJB 4.0 (`@Stateless`, `@TransactionAttribute`)
+- Jakarta Persistence 3.1 (`@PersistenceContext`, `@Version`, `LockModeType`)
 - Spring Boot 3.2.5
 - Spring Data JPA + Hibernate
 - H2 Database (em memória)
@@ -43,15 +45,36 @@
 ## 📁 Estrutura do Projeto
 
 ```text
+ejb-module/src/main/java/com/example/ejb/
+├── Beneficio.java              # Entidade JPA com @Version (optimistic locking)
+└── BeneficioEjbService.java    # @Stateless EJB — transferência com OPTIMISTIC_FORCE_INCREMENT
+
 backend-module/src/main/java/com/example/backend/
 ├── controller/       # Endpoints REST
 ├── dto/              # BeneficioRequest, BeneficioResponse, TransferenciaRequest
-├── entity/           # Beneficio com @Version (optimistic locking)
 ├── exception/        # BeneficioNotFoundException, SaldoInsuficienteException, GlobalExceptionHandler
-├── repository/       # BeneficioRepository com @Lock(PESSIMISTIC_WRITE)
-├── service/          # Regras de negócio e anti-deadlock
-└── config/           # CorsConfig (CorsFilter bean)
+├── repository/       # BeneficioRepository (Spring Data JPA)
+├── service/          # BeneficioService — delega transferência ao EJB
+└── config/           # CorsConfig, EjbConfig (registra BeneficioEjbService como @Bean)
 ```
+
+## ⚙️ Integração EJB + Spring Boot
+
+O projeto usa um **Maven multi-módulo**:
+
+```
+bip-teste-integrado/
+├── ejb-module/       → JAR com entidade e serviço EJB
+└── backend-module/   → Spring Boot que consome o ejb-module
+```
+
+**Como a integração funciona:**
+
+1. `ejb-module` compila em um JAR que o `backend-module` declara como dependência Maven.
+2. `EjbConfig` registra `BeneficioEjbService` como Spring `@Bean` — o Spring injeta o `EntityManager` via `@PersistenceContext` através do `PersistenceAnnotationBeanPostProcessor`.
+3. `@EntityScan("com.example.ejb")` instrui o Hibernate a mapear somente a entidade do EJB, evitando duplicatas.
+4. `BeneficioService.transferir()` chama `ejbService.transfer()` dentro de um contexto `@Transactional` Spring (equivalente ao CMT `REQUIRED` do EJB container).
+5. `BeneficioEjbService.transfer()` busca os dois registros com `em.find(..., LockModeType.OPTIMISTIC_FORCE_INCREMENT)` — ao fazer flush, o Hibernate garante que nenhuma versão foi alterada por outra transação concorrente; se houve conflito, lança `OptimisticLockException` e a transação faz rollback automaticamente.
 
 ## ▶️ Como rodar o Backend
 
@@ -111,17 +134,24 @@ http://localhost:8080/h2-console
 ## 🧪 Rodando os testes do Backend
 
 ```bash
-cd backend-module
+# Todos os módulos (raiz do projeto)
 mvn test
+
+# Apenas ejb-module
+cd ejb-module && mvn test
+
+# Apenas backend-module
+cd backend-module && mvn test
 ```
 
-**Cobertura atual: 42 testes — 0 falhas**
+**Cobertura atual: 54 testes — 0 falhas**
 
-| Suite | Testes |
-|---|---|
-| `BeneficioServiceTest` — unitários com Mockito | 15 |
-| `BeneficioControllerTest` — MockMvc standalone | 16 |
-| `BeneficioRepositoryTest` — integração com H2 | 11 |
+| Suite | Módulo | Testes |
+|---|---|---|
+| `BeneficioEjbServiceTest` — unitários (Mockito) | ejb-module | 12 |
+| `BeneficioServiceTest` — unitários com Mockito | backend-module | 15 |
+| `BeneficioControllerTest` — MockMvc standalone | backend-module | 16 |
+| `BeneficioRepositoryTest` — integração com H2 | backend-module | 11 |
 
 ## 🔁 Exemplos de requisições
 
@@ -300,5 +330,7 @@ src/app
 * **Guard e Interceptor Funcionais:** <br>O `AuthGuard` é implementado como `CanActivateFn` e o `AuthInterceptor` como `HttpInterceptorFn` — o padrão funcional do Angular 19, sem classes e sem `@Injectable`. O interceptor é registrado via `provideHttpClient(withInterceptors([authInterceptor]))` no bootstrap, eliminando o token legado `HTTP_INTERCEPTORS`.
 
 * **Testes com `NoopAnimationsModule`:** <br>Componentes que usam `p-stepper` ou outros elementos PrimeNG animados requerem `NoopAnimationsModule` nos testes. Sem ele, o Angular lança `NG05105: Unexpected synthetic property @content found`. A inclusão do módulo desabilita as animações sem afetar a lógica testada.
+
+* **EJB como requisito do desafio — e não como escolha técnica livre:** <br>O uso de `@Stateless` EJB e `@PersistenceContext` era uma exigência explícita do desafio (o bug a corrigir estava em `BeneficioEjbService`). Em um projeto greenfield, a mesma funcionalidade seria implementada diretamente no Spring Boot com `@Service` e `@Transactional` — sem a necessidade de um segundo módulo Maven ou da ponte via `EjbConfig`/`PersistenceAnnotationBeanPostProcessor`. A solução adotada preserva a estrutura EJB do enunciado e demonstra como integrá-la a um runtime Spring sem um container Java EE completo.
 
 * **Design System Cyberpunk:** <br>O frontend adota um visual **cyberpunk** com paleta escura (fundo `#030c18`), detalhes em ciano (`#00e5ff`) e magenta (`#d946ef`), tipografia técnica via fonte `Rajdhani`, bordas com glow neon e elementos decorativos como barcodes e sparklines SVG inline. O tema é aplicado globalmente via variáveis CSS no `styles.scss` e sobrescreve o tema Aura do PrimeNG, mantendo coerência visual em todos os componentes.
