@@ -1,0 +1,164 @@
+<p-toast></p-toast>
+
+<!-- Loading skeleton -->
+<div *ngIf="loading">
+  <p-skeleton height="140px" borderRadius="12px" styleClass="mb-4"></p-skeleton>
+  <p-skeleton height="400px" borderRadius="12px"></p-skeleton>
+</div>
+
+<ng-container *ngIf="!loading && beneficio">
+
+  <!-- Header -->
+  <div class="detalhe-header fin-card mb-4">
+    <div class="header-left">
+      <button class="back-btn" (click)="router.navigate(['/beneficios'])">
+        <i class="pi pi-arrow-left"></i>
+      </button>
+      <div class="avatar-circle">{{ initials }}</div>
+      <div class="header-info">
+        <h2>{{ beneficio.nome }}</h2>
+        <p class="text-secondary">{{ beneficio.descricao || 'Sem descrição' }}</p>
+        <div class="header-meta">
+          <app-status-badge [ativo]="beneficio.ativo"></app-status-badge>
+          <span class="meta-item"><i class="pi pi-hashtag"></i> ID: {{ beneficio.id }}</span>
+          <span class="meta-item"><i class="pi pi-code"></i> v{{ beneficio.version }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <div class="saldo-destaque">
+        <span class="saldo-label">Saldo disponível</span>
+        <span class="saldo-valor mono text-accent">{{ beneficio.valor | brlCurrency }}</span>
+      </div>
+      <div class="header-actions">
+        <p-button label="Transferir" icon="pi pi-arrow-right-arrow-left" (onClick)="irTransferencia()" size="small"></p-button>
+        <p-button label="Editar" icon="pi pi-pencil" [outlined]="true" (onClick)="openEdit()" size="small"></p-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="fin-card">
+    <p-tabs [(value)]="activeTab">
+      <p-tablist>
+        <p-tab value="0"><i class="pi pi-info-circle"></i> Dados</p-tab>
+        <p-tab value="1"><i class="pi pi-chart-line"></i> Movimentação</p-tab>
+        <p-tab value="2"><i class="pi pi-arrow-right-arrow-left"></i> Transferências</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+
+        <!-- Aba 1: Dados -->
+        <p-tabpanel value="0">
+          <div class="dados-grid">
+            <div class="dado-item">
+              <span class="dado-label">Nome</span>
+              <span class="dado-valor">{{ beneficio.nome }}</span>
+            </div>
+            <div class="dado-item">
+              <span class="dado-label">Descrição</span>
+              <span class="dado-valor">{{ beneficio.descricao || '—' }}</span>
+            </div>
+            <div class="dado-item">
+              <span class="dado-label">Valor</span>
+              <span class="dado-valor mono text-accent">{{ beneficio.valor | brlCurrency }}</span>
+            </div>
+            <div class="dado-item">
+              <span class="dado-label">Status</span>
+              <app-status-badge [ativo]="beneficio.ativo"></app-status-badge>
+            </div>
+            <div class="dado-item">
+              <span class="dado-label">ID</span>
+              <span class="dado-valor mono">{{ beneficio.id }}</span>
+            </div>
+            <div class="dado-item">
+              <span class="dado-label">Versão (lock)</span>
+              <span class="dado-valor mono">{{ beneficio.version }}</span>
+            </div>
+          </div>
+        </p-tabpanel>
+
+        <!-- Aba 2: Movimentação -->
+        <p-tabpanel value="1">
+          <div class="chart-wrapper">
+            <p-chart type="line" [data]="chartData" [options]="chartOptions" height="220px"></p-chart>
+          </div>
+          <p class="empty-hint text-secondary" *ngIf="transferencias.length === 0">
+            <i class="pi pi-info-circle"></i> Nenhuma movimentação registrada nesta sessão.
+          </p>
+        </p-tabpanel>
+
+        <!-- Aba 3: Transferências -->
+        <p-tabpanel value="2">
+          <p-table [value]="transferencias" styleClass="p-datatable-sm" responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Data/Hora</th>
+                <th>Tipo</th>
+                <th>Contraparte</th>
+                <th>Valor</th>
+                <th>Status</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-t>
+              <tr>
+                <td class="mono text-secondary">{{ t.dataHora | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <p-tag
+                    [value]="t.fromId === beneficio.id ? 'Enviada' : 'Recebida'"
+                    [severity]="t.fromId === beneficio.id ? 'danger' : 'success'">
+                  </p-tag>
+                </td>
+                <td>{{ t.fromId === beneficio.id ? t.toNome : t.fromNome }}</td>
+                <td>
+                  <app-money-display [value]="t.fromId === beneficio.id ? -t.valor : t.valor" [showSign]="true"></app-money-display>
+                </td>
+                <td>
+                  <p-tag [value]="t.status === 'CONCLUIDA' ? 'Concluída' : 'Falhou'" [severity]="t.status === 'CONCLUIDA' ? 'success' : 'danger'"></p-tag>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr><td colspan="5" class="empty-message">
+                <i class="pi pi-inbox"></i> Nenhuma transferência registrada nesta sessão.
+              </td></tr>
+            </ng-template>
+          </p-table>
+        </p-tabpanel>
+
+      </p-tabpanels>
+    </p-tabs>
+  </div>
+
+</ng-container>
+
+<!-- Dialog editar -->
+<p-dialog [(visible)]="dialogVisible" header="Editar Benefício" [modal]="true" [style]="{width:'480px'}" [draggable]="false">
+  <form [formGroup]="form" (ngSubmit)="save()" novalidate>
+    <div class="dialog-fields">
+      <div class="field">
+        <label>Nome *</label>
+        <input type="text" pInputText formControlName="nome" class="w-full" [class.ng-invalid]="nome.invalid && nome.touched" />
+        <small class="error-msg" *ngIf="nome.invalid && nome.touched">Nome obrigatório.</small>
+      </div>
+      <div class="field">
+        <label>Descrição</label>
+        <input type="text" pInputText formControlName="descricao" class="w-full" />
+      </div>
+      <div class="field">
+        <label>Valor *</label>
+        <p-inputnumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR" styleClass="w-full"></p-inputnumber>
+        <small class="error-msg" *ngIf="valor.invalid && valor.touched">Valor obrigatório.</small>
+      </div>
+      <div class="field-inline">
+        <p-checkbox formControlName="ativo" [binary]="true" inputId="ed-ativo"></p-checkbox>
+        <label for="ed-ativo">Benefício ativo</label>
+      </div>
+    </div>
+  </form>
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" [text]="true" severity="secondary" (onClick)="dialogVisible = false"></p-button>
+    <p-button label="Salvar" icon="pi pi-check" (onClick)="save()"></p-button>
+  </ng-template>
+</p-dialog>
