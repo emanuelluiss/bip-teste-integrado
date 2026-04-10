@@ -154,12 +154,12 @@ curl -X POST http://localhost:8080/api/v1/beneficios/transferencia \
 
 ## 🛠️ Tecnologias
 
-* **Framework:** Angular 19 (NgModules, Lazy Loading, Reactive Forms)
+* **Framework:** Angular 19 (Standalone Components, Lazy Loading, Reactive Forms)
 * **UI Library:** PrimeNG 19.1 + PrimeIcons + PrimeFlex
 * **Gráficos:** Chart.js 4
 * **Testes Unitários:** Jasmine + Karma
 * **Estilo:** SCSS com design system próprio (dark mode)
-* **Arquitetura:** Modular por Feature com camada Shared e Core isolada
+* **Arquitetura:** Standalone por Feature com camada Shared e Core isolada
 
 ## 📋 Pré-requisitos
 
@@ -264,26 +264,24 @@ src/app
 │   ├── interceptors/        # AuthInterceptor — injeta Bearer token
 │   └── services/            # AuthService — login/logout/estado
 ├── layout/                  # Shell da aplicação autenticada
-│   ├── layout.component     # Sidebar + topbar + router-outlet
-│   └── layout.module        # Roteamento filho com lazy loading
-├── pages/                   # Telas da aplicação
+│   └── layout.component     # Sidebar + topbar + router-outlet (standalone)
+├── pages/                   # Telas da aplicação (todas standalone)
 │   ├── login/               # Tela de autenticação
 │   ├── dashboard/           # Visão geral e métricas
 │   ├── beneficios/          # CRUD de benefícios
 │   ├── beneficio-detalhe/   # Detalhe + gráfico + tabs
 │   ├── transferencia/       # Stepper de transferência
 │   └── historico/           # Histórico com filtros e CSV
-└── shared/                  # Reutilizáveis entre features
+└── shared/                  # Reutilizáveis entre features (todos standalone)
     ├── components/          # StatusBadge, MoneyDisplay
     ├── models/              # Interfaces TypeScript (Beneficio, Transferencia...)
     ├── pipes/               # BrlCurrencyPipe
-    ├── services/            # BeneficioService, HistoricoService
-    └── shared.module        # Barrel de exportações compartilhadas
+    └── services/            # BeneficioService, HistoricoService
 ```
 
 ## 📌 Decisões Técnicas
 
-* **NgModules com Lazy Loading:** <br>Optei pelo modelo tradicional de NgModules em vez de Standalone Components para manter compatibilidade com o ecossistema PrimeNG 19 e garantir carregamento sob demanda de cada feature. O Angular carrega cada módulo (`DashboardModule`, `BeneficiosModule`, etc.) somente quando a rota é acessada, reduzindo o bundle inicial.
+* **Standalone Components com Lazy Loading:** <br>O projeto segue o padrão padrão do Angular 19 com Standalone Components. Não há `NgModule` na aplicação — cada componente, pipe e diretiva declara seus próprios `imports`. O bootstrap é feito via `bootstrapApplication` com `provideRouter(routes)`, e cada rota usa `loadComponent` para carregamento sob demanda, reduzindo o bundle inicial.
 
 * **Gerenciamento de Estado com BehaviorSubject:** <br>O `HistoricoService` usa `BehaviorSubject<TransferenciaHistorico[]>` como fonte única de verdade do histórico de transferências. Qualquer componente que precisar do estado atual recebe um `Observable` via `historico$`, sem acoplamento direto entre componentes.
 
@@ -295,10 +293,10 @@ src/app
 
 * **Stepper de Transferência com Validação de Saldo em Tempo Real:** <br>O `TransferenciaComponent` calcula o `valorError` e as funções `canGoStep2()` / `canGoStep3()` de forma síncrona com base no estado local, sem requisições adicionais ao backend. O saldo disponível é derivado da lista já carregada de benefícios, proporcionando feedback imediato ao usuário.
 
-* **Componentes PrimeNG Atualizados:** <br>`p-calendar → p-datepicker`, `p-dropdown → p-select` — as mudanças refletem a evolução da biblioteca e maior aderência ao HTML semântico. O tema Aura é configurado via `providePrimeNG` com `darkModeSelector: '.app-dark'`, centralizado no `AppModule`.
+* **Componentes PrimeNG Atualizados:** <br>`p-calendar → p-datepicker`, `p-dropdown → p-select` — as mudanças refletem a evolução da biblioteca e maior aderência ao HTML semântico. O tema Aura é configurado via `providePrimeNG` com `darkModeSelector: '.app-dark'`, centralizado no `bootstrapApplication` em `main.ts`.
 
 * **BrlCurrencyPipe com `Math.abs`:** <br>O pipe formata valores monetários sempre como positivos por padrão, usando `Intl.NumberFormat` com locale `pt-BR`. O parâmetro `showSign` permite exibir `+` ou `-` explicitamente apenas quando necessário (ex: movimentações no detalhe do benefício).
 
-* **`standalone: false` nos Componentes:** <br>O Angular 19 cria componentes standalone por padrão via CLI. Como o projeto usa NgModules, todos os componentes criados manualmente exigem `standalone: false` explícito no decorator `@Component`. Sem isso, o compilador não os reconhece como declarações de módulo e gera erros em tempo de build.
+* **Guard e Interceptor Funcionais:** <br>O `AuthGuard` é implementado como `CanActivateFn` e o `AuthInterceptor` como `HttpInterceptorFn` — o padrão funcional do Angular 19, sem classes e sem `@Injectable`. O interceptor é registrado via `provideHttpClient(withInterceptors([authInterceptor]))` no bootstrap, eliminando o token legado `HTTP_INTERCEPTORS`.
 
 * **Testes com `NoopAnimationsModule`:** <br>Componentes que usam `p-stepper` ou outros elementos PrimeNG animados requerem `NoopAnimationsModule` nos testes. Sem ele, o Angular lança `NG05105: Unexpected synthetic property @content found`. A inclusão do módulo desabilita as animações sem afetar a lógica testada.

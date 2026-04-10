@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-money-display',
-  standalone: false,
+  standalone: true,
   template: `
     <span class="money-display mono" [class.positive]="value > 0" [class.negative]="value < 0" [class.show-sign]="showSign">
       {{ formatted }}

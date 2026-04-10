@@ -1,8 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-status-badge',
-  standalone: false,
+  standalone: true,
+  imports: [TagModule],
   template: `
     <p-tag [severity]="severity" [value]="label"></p-tag>
   `

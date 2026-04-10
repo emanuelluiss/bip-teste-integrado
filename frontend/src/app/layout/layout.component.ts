@@ -1,6 +1,12 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { filter } from 'rxjs/operators';
+import { TooltipModule } from 'primeng/tooltip';
+import { BadgeModule } from 'primeng/badge';
+import { RippleModule } from 'primeng/ripple';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
 import { AuthService } from '../core/services/auth.service';
 
 interface NavItem {
@@ -12,9 +18,10 @@ interface NavItem {
 
 @Component({
   selector: 'app-layout',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, TooltipModule, BadgeModule, RippleModule, AvatarModule, ButtonModule],
   templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss'],
-  standalone: false
+  styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
   collapsed = false;

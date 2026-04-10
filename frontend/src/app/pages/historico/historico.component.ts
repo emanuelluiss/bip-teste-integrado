@@ -1,12 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { SelectModule } from 'primeng/select';
+import { DatePickerModule } from 'primeng/datepicker';
+import { ToolbarModule } from 'primeng/toolbar';
+import { PanelModule } from 'primeng/panel';
+import { TimelineModule } from 'primeng/timeline';
+import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { DividerModule } from 'primeng/divider';
 import { TransferenciaHistorico } from '../../shared/models/beneficio.model';
 import { HistoricoService } from '../../shared/services/historico.service';
+import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
+import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-historico',
+  standalone: true,
+  imports: [
+    CommonModule, FormsModule,
+    TableModule, ButtonModule, TagModule, SelectModule, DatePickerModule,
+    ToolbarModule, PanelModule, TimelineModule, InputTextModule, ToastModule, DividerModule,
+    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
+  ],
   templateUrl: './historico.component.html',
-  styleUrls: ['./historico.component.scss'],
-  standalone: false
+  styleUrls: ['./historico.component.scss']
 })
 export class HistoricoComponent implements OnInit {
   all: TransferenciaHistorico[] = [];

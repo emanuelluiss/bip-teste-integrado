@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({ name: 'brlCurrency', standalone: false })
+@Pipe({ name: 'brlCurrency', standalone: true })
 export class BrlCurrencyPipe implements PipeTransform {
   transform(value: number | null | undefined, showSign = false): string {
     if (value == null) return 'R$ 0,00';

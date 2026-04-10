@@ -1,15 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { SelectModule } from 'primeng/select';
+import { TagModule } from 'primeng/tag';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TooltipModule } from 'primeng/tooltip';
+import { CheckboxModule } from 'primeng/checkbox';
 import { Beneficio, BeneficioRequest } from '../../shared/models/beneficio.model';
 import { BeneficioService } from '../../shared/services/beneficio.service';
+import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
+import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-beneficios',
+  standalone: true,
+  imports: [
+    CommonModule, ReactiveFormsModule, FormsModule,
+    TableModule, DialogModule, ConfirmDialogModule, ToastModule, ToolbarModule,
+    ButtonModule, InputTextModule, InputNumberModule, SelectModule, TagModule,
+    SkeletonModule, TooltipModule, CheckboxModule,
+    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
+  ],
   templateUrl: './beneficios.component.html',
-  styleUrls: ['./beneficios.component.scss'],
-  standalone: false
+  styleUrls: ['./beneficios.component.scss']
 })
 export class BeneficiosComponent implements OnInit {
   beneficios: Beneficio[] = [];

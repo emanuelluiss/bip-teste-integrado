@@ -1,15 +1,23 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Beneficio } from '../../shared/models/beneficio.model';
+import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TagModule } from 'primeng/tag';
+import { DividerModule } from 'primeng/divider';
+import { Beneficio, TransferenciaHistorico } from '../../shared/models/beneficio.model';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { HistoricoService } from '../../shared/services/historico.service';
-import { TransferenciaHistorico } from '../../shared/models/beneficio.model';
+import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
+import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, ButtonModule, SkeletonModule, TagModule, DividerModule, BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
-  standalone: false
+  styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
   beneficios: Beneficio[] = [];

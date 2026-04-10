@@ -1,16 +1,40 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { TabsModule } from 'primeng/tabs';
+import { PanelModule } from 'primeng/panel';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
+import { DividerModule } from 'primeng/divider';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ToastModule } from 'primeng/toast';
+import { TableModule } from 'primeng/table';
+import { ChartModule } from 'primeng/chart';
 import { Beneficio, BeneficioRequest, TransferenciaHistorico } from '../../shared/models/beneficio.model';
 import { BeneficioService } from '../../shared/services/beneficio.service';
 import { HistoricoService } from '../../shared/services/historico.service';
+import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
+import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-beneficio-detalhe',
+  standalone: true,
+  imports: [
+    CommonModule, ReactiveFormsModule,
+    TabsModule, PanelModule, TagModule, ButtonModule, SkeletonModule,
+    DividerModule, DialogModule, InputTextModule, InputNumberModule,
+    CheckboxModule, ToastModule, TableModule, ChartModule,
+    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
+  ],
   templateUrl: './beneficio-detalhe.component.html',
-  styleUrls: ['./beneficio-detalhe.component.scss'],
-  standalone: false
+  styleUrls: ['./beneficio-detalhe.component.scss']
 })
 export class BeneficioDetalheComponent implements OnInit {
   beneficio: Beneficio | null = null;

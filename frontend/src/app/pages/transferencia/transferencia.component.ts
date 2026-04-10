@@ -1,14 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
+import { StepperModule } from 'primeng/stepper';
+import { SelectModule } from 'primeng/select';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
+import { DividerModule } from 'primeng/divider';
+import { ToastModule } from 'primeng/toast';
+import { MessageModule } from 'primeng/message';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
 import { Beneficio } from '../../shared/models/beneficio.model';
 import { BeneficioService } from '../../shared/services/beneficio.service';
+import { BrlCurrencyPipe } from '../../shared/pipes/brl-currency.pipe';
+import { MoneyDisplayComponent } from '../../shared/components/money-display/money-display.component';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 
 @Component({
   selector: 'app-transferencia',
+  standalone: true,
+  imports: [
+    CommonModule, FormsModule,
+    StepperModule, SelectModule, InputNumberModule, ButtonModule,
+    DividerModule, ToastModule, MessageModule, ProgressSpinnerModule, TagModule,
+    BrlCurrencyPipe, MoneyDisplayComponent, StatusBadgeComponent
+  ],
   templateUrl: './transferencia.component.html',
-  styleUrls: ['./transferencia.component.scss'],
-  standalone: false
+  styleUrls: ['./transferencia.component.scss']
 })
 export class TransferenciaComponent implements OnInit {
   step = 0;
