@@ -1,4 +1,4 @@
-# 💰 FinanceApp — Frontend
+# 💰 FinanceApp
 
 ![Angular](https://img.shields.io/badge/Angular-19.2-dd0031?style=flat&logo=angular&logoColor=dd0031)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat&logo=typescript)
@@ -6,10 +6,13 @@
 ![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C?style=flat&logo=reactivex&logoColor=B7178C)
 ![Chart.js](https://img.shields.io/badge/Chart.js-4.5-FF6384?style=flat&logo=chartdotjs&logoColor=white)
 ![Karma](https://img.shields.io/badge/Karma-6.4-3DDC84?style=flat&logo=jasmine&logoColor=47D687)
+![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=flat&logo=springboot&logoColor=white)
+![JUnit](https://img.shields.io/badge/JUnit-5-25A162?style=flat&logo=junit5&logoColor=white)
 
-## 🎯 Teste Integrado — Módulo Frontend
+## 🎯 Teste Integrado — Sistema de Gestão de Benefícios
 
-**Objetivo Central**: Construir o frontend de um sistema de gestão de benefícios financeiros, integrado a uma API REST Spring Boot, com foco em usabilidade, validações e consistência visual.
+**Objetivo Central**: Construir um sistema fullstack de gestão de benefícios financeiros, composto por uma API REST Spring Boot e um frontend Angular 19 com PrimeNG.
 
 🔍 **Competências Avaliadas**:
 
@@ -18,10 +21,145 @@
 3. Componentização e Reuso
 4. Gerenciamento de Estado com RxJS (BehaviorSubject)
 5. Observabilidade e Feedbacks ao Usuário
-6. Testes Automatizados (Jasmine/Karma)
+6. Testes Automatizados (Jasmine/Karma + JUnit/Mockito)
 7. Design System com Dark Mode
 
-🧠 **Resolução**: <p>Sistema de gestão de benefícios financeiros desenvolvido com Angular 19 e PrimeNG 19, consumindo uma API REST Spring Boot. O projeto aplica boas práticas de arquitetura modular, Clean Code e princípios SOLID. Inclui autenticação simulada com JWT, controle de estado reativo via RxJS, persistência de histórico em localStorage e 69 testes unitários cobrindo serviços, guards, pipes e componentes.</p>
+🧠 **Resolução**: <p>Sistema fullstack de gestão de benefícios financeiros. O backend foi desenvolvido com Spring Boot 3, Spring Data JPA e H2, implementando locking pessimista e versionamento otimista para transferências seguras e livres de deadlock. O frontend foi desenvolvido com Angular 19 e PrimeNG 19, aplicando arquitetura modular, controle de estado reativo via RxJS e persistência de histórico em localStorage. O projeto inclui 111 testes automatizados (42 no backend + 69 no frontend).</p>
+
+---
+
+# 📦 Backend
+
+## 🛠️ Tecnologias
+
+- Java 17
+- Spring Boot 3.2.5
+- Spring Data JPA + Hibernate
+- H2 Database (em memória)
+- Bean Validation (jakarta.validation)
+- SpringDoc OpenAPI 2.3 (Swagger UI)
+- JUnit 5 + Mockito + MockMvc
+
+## 📁 Estrutura do Projeto
+
+```text
+backend-module/src/main/java/com/example/backend/
+├── controller/       # Endpoints REST
+├── dto/              # BeneficioRequest, BeneficioResponse, TransferenciaRequest
+├── entity/           # Beneficio com @Version (optimistic locking)
+├── exception/        # BeneficioNotFoundException, SaldoInsuficienteException, GlobalExceptionHandler
+├── repository/       # BeneficioRepository com @Lock(PESSIMISTIC_WRITE)
+├── service/          # Regras de negócio e anti-deadlock
+└── config/           # CorsConfig (CorsFilter bean)
+```
+
+## ▶️ Como rodar o Backend
+
+### Pré-requisitos
+
+- Java 17 ou superior
+- Maven instalado
+- IntelliJ IDEA (recomendado)
+
+### Opção 1 — Pelo IntelliJ IDEA (recomendado)
+
+1. Abra o IntelliJ → **File > Open**
+2. Selecione o arquivo `pom.xml` dentro de `backend-module/`
+3. Clique em **Open as Project**
+4. Aguarde o Maven baixar as dependências
+5. Vá em **File > Settings > Build, Execution, Deployment > Build Tools > Maven > Runner**
+6. Marque ✅ **Delegate IDE build/run actions to Maven** → **Apply > OK**
+7. Abra `BackendApplication.java` e clique em ▶️
+
+> ✅ O projeto está rodando quando aparecer no console:
+> ```
+> Started BackendApplication in X seconds
+> ```
+
+### Opção 2 — Pelo terminal
+
+```bash
+cd backend-module
+mvn spring-boot:run
+```
+
+## 🌐 Endpoints disponíveis
+
+Base URL: `http://localhost:8080/api/v1/beneficios`
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| GET | `/api/v1/beneficios` | Lista todos os benefícios |
+| GET | `/api/v1/beneficios/{id}` | Busca por ID |
+| POST | `/api/v1/beneficios` | Cria novo benefício |
+| PUT | `/api/v1/beneficios/{id}` | Atualiza um benefício |
+| DELETE | `/api/v1/beneficios/{id}` | Remove um benefício |
+| POST | `/api/v1/beneficios/transferencia` | Transfere valor entre benefícios |
+
+## 🗄️ Console do banco H2
+
+```
+http://localhost:8080/h2-console
+```
+
+| Campo | Valor |
+|-------|-------|
+| JDBC URL | `jdbc:h2:mem:beneficiodb` |
+| Username | `sa` |
+| Password | *(deixar em branco)* |
+
+## 🧪 Rodando os testes do Backend
+
+```bash
+cd backend-module
+mvn test
+```
+
+**Cobertura atual: 42 testes — 0 falhas**
+
+| Suite | Testes |
+|---|---|
+| `BeneficioServiceTest` — unitários com Mockito | 15 |
+| `BeneficioControllerTest` — MockMvc standalone | 16 |
+| `BeneficioRepositoryTest` — integração com H2 | 11 |
+
+## 🔁 Exemplos de requisições
+
+### Criar benefício
+```bash
+curl -X POST http://localhost:8080/api/v1/beneficios \
+  -H "Content-Type: application/json" \
+  -d '{"nome":"Benefício Teste","descricao":"Desc","valor":500.00,"ativo":true}'
+```
+
+### Transferir valor
+```bash
+curl -X POST http://localhost:8080/api/v1/beneficios/transferencia \
+  -H "Content-Type: application/json" \
+  -d '{"fromId":1,"toId":2,"valor":100.00}'
+```
+
+## 🚨 Solução de problemas comuns
+
+| Erro | Causa | Solução |
+|------|-------|---------|
+| `Port 8080 was already in use` | Porta ocupada | Adicione `server.port=8081` no `application.properties` |
+| `Table not found` | `schema.sql` não executado | Verifique `spring.sql.init.mode=always` no `application.properties` |
+| `Output directory is not specified` | IntelliJ compilando sem Maven | Marque **Delegate IDE build/run actions to Maven** nas configurações |
+| SDK não definido | Java não configurado no IntelliJ | **File > Project Structure > SDK > Download JDK 17** |
+
+---
+
+# 🖥️ Frontend
+
+## 🛠️ Tecnologias
+
+* **Framework:** Angular 19 (NgModules, Lazy Loading, Reactive Forms)
+* **UI Library:** PrimeNG 19.1 + PrimeIcons + PrimeFlex
+* **Gráficos:** Chart.js 4
+* **Testes Unitários:** Jasmine + Karma
+* **Estilo:** SCSS com design system próprio (dark mode)
+* **Arquitetura:** Modular por Feature com camada Shared e Core isolada
 
 ## 📋 Pré-requisitos
 
@@ -32,7 +170,13 @@
   npm install npm@latest -g
   ```
 
-* Backend rodando em `http://localhost:8080` (ver `../backend-module`)
+* Angular CLI 19
+
+  ```sh
+  npm install -g @angular/cli@19
+  ```
+
+* Backend rodando em `http://localhost:8080` (ver seção Backend acima)
 
 ## 📦 Instalação
 
@@ -49,7 +193,7 @@
    npm install
    ```
 
-## ▶️ Rode o projeto
+## ▶️ Rode o Frontend
 
 * Comando Angular para rodar o projeto:
 
@@ -72,7 +216,7 @@ A aplicação estará disponível em 👉 **http://localhost:4200** 👈
 | Usuário | `admin` |
 | Senha | `admin123` |
 
-## 🧪 Testes
+## 🧪 Rodando os testes do Frontend
 
 * Rodar todos os testes unitários:
 
@@ -111,18 +255,7 @@ A aplicação estará disponível em 👉 **http://localhost:4200** 👈
 - **Autenticação:** Login com validação de formulário reativo, simulação de JWT em localStorage e guard de rota.
 - **Design System Dark:** Tema escuro consistente com variáveis CSS, paleta definida e override do tema Aura do PrimeNG.
 
-## 🛠️ Tech Stack
-
-* **Framework:** Angular 19 (NgModules, Lazy Loading, Reactive Forms)
-* **UI Library:** PrimeNG 19.1 + PrimeIcons + PrimeFlex
-* **Gráficos:** Chart.js 4
-* **Testes Unitários:** Jasmine + Karma
-* **Estilo:** SCSS com design system próprio (dark mode)
-* **Arquitetura:** Modular por Feature com camada Shared e Core isolada
-
 ## 📂 Arquitetura do Projeto
-
-O projeto segue uma estrutura modular focada em escalabilidade e separação de responsabilidades:
 
 ```text
 src/app
