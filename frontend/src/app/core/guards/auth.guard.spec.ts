@@ -20,7 +20,7 @@ describe('AuthGuard', () => {
   });
 
   it('deve permitir acesso quando logado', () => {
-    spyOn(auth, 'isLoggedIn' as never).and.returnValue(true);
+    spyOnProperty(auth, 'isLoggedIn', 'get').and.returnValue(true);
     const result = guard.canActivate();
     expect(result).toBeTrue();
   });

@@ -36,7 +36,7 @@ describe('BeneficioService', () => {
     service.buscar(99).subscribe({
       error: (err: Error) => expect(err.message).toBe('Recurso não encontrado.')
     });
-    http.expectOne(`${BASE}/99`).flush({ message: 'not found' }, { status: 404, statusText: 'Not Found' });
+    http.expectOne(`${BASE}/99`).flush(null, { status: 404, statusText: 'Not Found' });
   });
 
   it('deve emitir erro de servidor em 500', () => {

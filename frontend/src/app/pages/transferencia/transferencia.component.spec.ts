@@ -1,6 +1,7 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TransferenciaComponent } from './transferencia.component';
 import { TransferenciaModule } from './transferencia.module';
 import { MessageService } from 'primeng/api';
@@ -24,7 +25,7 @@ describe('TransferenciaComponent — validação de saldo', () => {
     serviceSpy.listar.and.returnValue(of(mockBeneficios));
 
     await TestBed.configureTestingModule({
-      imports: [TransferenciaModule, HttpClientTestingModule, RouterTestingModule],
+      imports: [TransferenciaModule, HttpClientTestingModule, RouterTestingModule, NoopAnimationsModule],
       providers: [
         MessageService,
         HistoricoService,
