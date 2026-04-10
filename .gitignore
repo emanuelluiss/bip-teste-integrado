@@ -18,3 +18,12 @@ untitled/
 # OS
 .DS_Store
 Thumbs.db
+
+# Ferramentas locais
+.claude/
+
+# Arquivos temporários
+*.bak
+
+# package-lock.json gerado por engano na raiz (o correto fica em frontend/)
+/package-lock.json
